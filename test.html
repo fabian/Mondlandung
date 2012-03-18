@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Mondlandung</title>
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+        <script src="gravity.js"></script>
+        <style>
+        
+        body {
+            background-color: #051320;
+        }
+
+        #system {
+            width: 1000px;
+            height: 650px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -500px;
+            margin-top: -350px;
+        }
+
+        .body {
+            position: absolute;
+        }
+
+        #earth {
+            left: 450px;
+            top: 300px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            background-color: green;
+        }
+
+        #moon {
+            left: 480px;
+            top: 50px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #ccc;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="system">
+            <canvas id="trace" width="1000" height="650"></canvas>
+            <div id="earth" class="body"></div>
+            <div id="moon" class="body"></div>
+        </div>
+        <script>
+
+        var system = new System('trace');
+        var earth = new Body('earth', system, 800, 0, true);
+        var moon = new Body('moon', system, 200, 19.5, false);
+
+        </script>
+    </body>
+</html>
