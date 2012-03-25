@@ -87,12 +87,18 @@ Body.prototype.live = function () {
         var theta = Math.atan2(delta.y, delta.x);
 
         var distance2 = delta.y * delta.y + delta.x * delta.x;
-        var ndx = delta.x / Math.sqrt(distance2);
-        var ndy = delta.y / Math.sqrt(distance2);
+        var distance = Math.sqrt(distance2);
+        var ndx = delta.x / distance;
+        var ndy = delta.y / distance;
 
         var force = this.system.gravity * this.mass * body.mass / distance2;
         dx += force * Math.cos(theta);
         dy += force * Math.sin(theta);
+
+        if (distance < 60) {
+            this.speed.x = dx = 0;
+            this.speed.y = dy = 0;
+        }
     }
 
     this.speed.x += dx;

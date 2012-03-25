@@ -33,7 +33,7 @@
             border-radius: 50px;
             background-color: green;
         }
-
+        
         #moon {
             left: 480px;
             top: 50px;
@@ -42,6 +42,15 @@
             border-radius: 20px;
             background-color: #ccc;
         }
+        
+        #rocket {
+            left: 535px;
+            top: 300px;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background-color: #cc3e3e;
+        }
         </style>
     </head>
     <body>
@@ -49,12 +58,14 @@
             <canvas id="trace" width="1000" height="650"></canvas>
             <div id="earth" class="body"></div>
             <div id="moon" class="body"></div>
+            <div id="rocket" class="body"></div>
         </div>
         <script>
 
         var system = new System('trace');
         var earth = new Body('earth', system, 450, 0, 0, true);
         var moon = new Body('moon', system, 60, 8, 0, false);
+        var rocket = new Body('rocket', system, 3, 5, 0, false);
 
         </script>
     </body>
