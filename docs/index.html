@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Documentation Mondlandung</title>
+        <style>
+        </style>
+    </head>
+    <body>
+        <h1>Mondlandung</h1>
+
+        <h2>Newtons Gravitationsgesetz</h2>
+        <p>Gravitationskonstante G = 6.6…</p>
+        <p>Masse m1</p>
+        <p>Masse m2</p>
+        <p>Distanz r</p>
+        <p>F = G * (m1*m2 / r^2)</p>
+
+        <h2>Berechnung</h2>
+        <p>Position x(t)</p>
+        <p>Geschwindigkeit v(t)</p>
+        <p>x'(t) = v(t)</p>
+        <p>v'(t) = a(t)</p>
+
+        <h3>Rakete</h3>
+        <p>Position xErde = [40; 40; 40]</p>
+        <p>Startposition xRakete0 = [45; 40; 40]</p>
+        <p>Startvektor uRakete (z.B. [0; 1; 0])</p>
+        <p>Startzeitpunkt t0 = 0</p>
+        <p>Masse Erde me = 600</p>
+        <p>Masse Brennstoff mb = 10</p>
+        <p>Masse Rakete mr = 10 + mb = 20</p>
+        <p>Beschleunigung bRakete = [0; 2; 0]</p>
+        <p>xRakete(0) = xRakete0;
+        <p>xRakete(t) = xRakete0 + uRakete * vRakete(t) * t</p>
+        <p>vRakete(t) = aRakete(t) * t</p>
+        <p>aRakete(t) = bRakete - G * (mr*me / (xRakete(t-1) - xErde))</p>
+
+        <p>vRakete(t) = bRakete - G * (mr*me / (xRakete(t-1) - xErde)) * t</p>
+        
+        <h3>Mond</h3>
+        <p>Startposition xMond0 = [20; 40; 40]</p>
+        <p>Masse Mond mm = 200</p>
+        <p>aMond0 = [0; 10; 0]</p>
+        <p>xMond(t) = xMond0 + [0; 1; 0] * (kMond) * t<p>
+        <p>vMond(t) = aMond(t) * t</p>
+        <p>aMond(0) = aMond0</p>
+        <p>aMond(t) = aMond(t-1) - G * (mm*me / (xMond(t-1) - xErde))</p>
+
+        <h2>Gleichung</h2>
+        <p>xRakete(t) = xMond(t)</p>
+        <p>vRakete(t) = vMond(t)</p>
+    </body>
+</html>
