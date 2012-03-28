@@ -7,7 +7,6 @@ function System(trace) {
     this.gravity = 0.667;
 
     this.canvas = document.getElementById(trace).getContext('2d');
-    this.traces = [];
 
     var that = this;
     setInterval(function () {
@@ -21,13 +20,6 @@ System.prototype.tick = function () {
 
     for (i in this.bodies) {
         this.bodies[i].live();
-    }
-
-    this.canvas.clearRect(0, 0, 1000, 700);
-    for (i in this.traces) {
-        trace = this.traces[i];
-        this.canvas.fillStyle = 'rgba(255, 236, 145, 1)';
-        this.canvas.fillRect(trace.x, trace.y, 1, 1);
     }
 };
 
@@ -51,6 +43,9 @@ function Body(id, system, mass, speed_x, speed_y, fixed) {
 Body.prototype.draw = function () {
     this.div.style.left = (this.position.x - this.div.offsetWidth / 2) + "px";
     this.div.style.top = (this.position.y - this.div.offsetHeight / 2) + "px";
+
+    this.system.canvas.fillStyle = 'rgba(255, 236, 145, 1)';
+    this.system.canvas.fillRect(this.position.x, this.position.y, 1, 1);
 };
 
 Body.prototype.drift = function () {
@@ -106,6 +101,5 @@ Body.prototype.live = function () {
     this.drift();
 
     this.draw();
-    this.system.traces.push({x: this.position.x, y: this.position.y});
 };
 
