@@ -8,12 +8,15 @@ function System(trace) {
 
     this.canvas = document.getElementById(trace);
     this.context = this.canvas.getContext('2d');
+}
+
+System.prototype.start = function () {
 
     var that = this;
     setInterval(function () {
         that.tick();
     }, this.time);
-}
+};
 
 System.prototype.tick = function () {
 
