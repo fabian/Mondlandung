@@ -6,7 +6,8 @@ function System(trace) {
     this.time = 30;
     this.gravity = 0.667;
 
-    this.canvas = document.getElementById(trace).getContext('2d');
+    this.canvas = document.getElementById(trace);
+    this.context = this.canvas.getContext('2d');
 
     var that = this;
     setInterval(function () {
@@ -16,7 +17,7 @@ function System(trace) {
 
 System.prototype.tick = function () {
 
-    var i, trace;
+    var i;
 
     for (i in this.bodies) {
         this.bodies[i].live();
@@ -27,6 +28,21 @@ System.prototype.add = function (body) {
     this.bodies.push(body);
 };
 
+System.prototype.clone = function (object) {
+    var target = {};
+    for (var i in object) {
+        if (object.hasOwnProperty(i)) {
+            target[i] = object[i];
+        }
+    }
+    return target;
+};
+
+System.prototype.draw = function (position, color) {
+    this.context.fillStyle = color;
+    this.context.fillRect(Math.round(position.x), Math.round(position.y), 1, 1);
+};
+
 function Body(id, system, mass, speed_x, speed_y, fixed) {
 
     this.div = document.getElementById(id);
@@ -35,17 +51,34 @@ function Body(id, system, mass, speed_x, speed_y, fixed) {
     this.speed = {x: speed_x, y: speed_y};
     this.position = {x: this.div.offsetLeft + this.div.offsetWidth / 2, y: this.div.offsetTop + this.div.offsetHeight / 2}
     this.fixed = fixed;
-    
+    this.traces = [];
+
     // add body to system
     this.system.add(this);
 }
 
 Body.prototype.draw = function () {
+
+    var trace;
+
     this.div.style.left = (this.position.x - this.div.offsetWidth / 2) + "px";
     this.div.style.top = (this.position.y - this.div.offsetHeight / 2) + "px";
 
-    this.system.canvas.fillStyle = 'rgba(255, 236, 145, 1)';
-    this.system.canvas.fillRect(this.position.x, this.position.y, 1, 1);
+    this.system.draw(this.position, 'rgba(255, 236, 145, 1)');
+
+    this.traces.push(this.system.clone(this.position));
+
+    // remove older than 100
+    if (this.traces.length > 100) {
+        trace = this.traces.shift();
+        this.system.draw(trace, 'rgba(5, 19, 32, 1)');
+    }
+
+    // fade out trace
+    for (var i in this.traces) {
+        trace = this.traces[i];
+        this.system.draw(trace, 'rgba(5, 19, 32, 0.02)');
+    }
 };
 
 Body.prototype.drift = function () {
