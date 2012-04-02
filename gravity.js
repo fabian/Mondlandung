@@ -52,7 +52,7 @@ function Body(id, system, mass, speed_x, speed_y, fixed) {
     this.system = system;
     this.mass = mass;
     this.speed = {x: speed_x, y: speed_y};
-    this.position = {x: this.div.offsetLeft + this.div.offsetWidth / 2, y: this.div.offsetTop + this.div.offsetHeight / 2}
+    this.position = {x: this.div.offsetLeft + this.div.offsetWidth / 2, y: this.div.offsetTop + this.div.offsetHeight / 2};
     this.fixed = fixed;
     this.traces = [];
 
