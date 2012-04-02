@@ -66,6 +66,14 @@
         var earth = new Body('earth', system, 450, 0, 0, true);
         var moon = new Body('moon', system, 60, 8, 0, false);
         var rocket = new Body('rocket', system, 3, 5, 0, false);
+
+        var offset = rocket.offset();
+
+        document.onclick = function () {
+            rocket.position = system.clone(offset);
+            rocket.speed = {x: 5, y: 0};
+        };
+
         system.start();
 
         </script>
