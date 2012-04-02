@@ -73,7 +73,8 @@ Body.prototype.live = function () {
 
         body = this.system.bodies[i];
 
-        if (body === this) {
+        // skip moving bodies and the body itself
+        if (body.fixed === false || body === this) {
             continue;
         }
 
