@@ -69,7 +69,7 @@
 
         var offset = rocket.offset();
 
-        document.onclick = function () {
+        document.onmousedown = function () {
             rocket.position = system.clone(offset);
             rocket.speed = {x: 5, y: 0};
         };
