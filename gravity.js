@@ -1,4 +1,39 @@
 
+function Vector(x, y, z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+}
+
+Vector.prototype.add = function(v) {
+    this.x += v.x;
+    this.y += v.y;
+    this.z += v.z;
+};
+
+Vector.prototype.multiply = function(k) {
+    this.x *= k;
+    this.y *= k;
+    this.z *= k;
+};
+
+Vector.prototype.clone = function() {
+    return new Vector(this.x, this.y, this.z);
+};
+
+Vector.prototype.diff = function (v) {
+    return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
+};
+
+Vector.prototype.unit = function () {
+    var length = this.length();
+    return new Vector(this.x / length, this.y / length, this.z / length);
+};
+
+Vector.prototype.length = function () {
+    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+};
+
 function System(trace) {
 
     this.bodies = [];
@@ -31,27 +66,17 @@ System.prototype.add = function (body) {
     this.bodies.push(body);
 };
 
-System.prototype.clone = function (object) {
-    var target = {};
-    for (var i in object) {
-        if (object.hasOwnProperty(i)) {
-            target[i] = object[i];
-        }
-    }
-    return target;
-};
-
 System.prototype.draw = function (position, color) {
     this.context.fillStyle = color;
     this.context.fillRect(Math.round(position.x), Math.round(position.y), 1, 1);
 };
 
-function Body(id, system, mass, speed_x, speed_y, fixed) {
+function Body(id, system, mass, speed, fixed) {
 
     this.div = document.getElementById(id);
     this.system = system;
     this.mass = mass;
-    this.speed = {x: speed_x, y: speed_y};
+    this.speed = speed;
     this.position = this.offset();
     this.fixed = fixed;
     this.traces = [];
@@ -61,7 +86,7 @@ function Body(id, system, mass, speed_x, speed_y, fixed) {
 }
 
 Body.prototype.offset = function () {
-    return {x: this.div.offsetLeft + this.div.offsetWidth / 2, y: this.div.offsetTop + this.div.offsetHeight / 2};
+    return new Vector(this.div.offsetLeft + this.div.offsetWidth / 2, this.div.offsetTop + this.div.offsetHeight / 2, 0);
 };
 
 Body.prototype.draw = function () {
@@ -73,7 +98,7 @@ Body.prototype.draw = function () {
 
     this.system.draw(this.position, 'rgba(255, 236, 145, 1)');
 
-    this.traces.push(this.system.clone(this.position));
+    this.traces.push(this.position.clone());
 
     // remove older than 100
     if (this.traces.length > 100) {
@@ -89,12 +114,7 @@ Body.prototype.draw = function () {
 };
 
 Body.prototype.drift = function () {
-    this.position.x += this.speed.x;
-    this.position.y += this.speed.y;
-};
-
-Body.prototype.delta = function (body) {
-    return {x: body.position.x - this.position.x, y: body.position.y - this.position.y};
+    this.position.add(this.speed);
 };
 
 Body.prototype.live = function () {
@@ -103,8 +123,8 @@ Body.prototype.live = function () {
         return;
     }
 
-    var i, body;
-    var delta = 0, distance2 = 0, distance = 0, n = 0, dx = 0, dy = 0;
+    var i, body, unit;
+    var diff = 0, distance = 0, force = 0, delta = new Vector(0, 0, 0);
 
     for (i in this.system.bodies) {
 
@@ -115,25 +135,22 @@ Body.prototype.live = function () {
             continue;
         }
 
-        delta = this.delta(body);
+        diff = body.position.diff(this.position);
 
-        distance2 = delta.y * delta.y + delta.x * delta.x;
-        distance = Math.sqrt(distance2);
+        distance = diff.length();
+        unit = diff.unit();
 
-        n = {x: delta.x / distance, y: delta.y / distance};
+        var force = this.system.gravity * this.mass * body.mass / (distance * distance);
+        unit.multiply(force);
 
-        var force = this.system.gravity * this.mass * body.mass / distance2;
-        dx += force * n.x;
-        dy += force * n.y;
+        delta.add(unit);
 
         if (distance < 60) {
-            this.speed.x = dx = 0;
-            this.speed.y = dy = 0;
+            this.speed = delta = new Vector(0, 0, 0);
         }
     }
 
-    this.speed.x += dx;
-    this.speed.y += dy;
+    this.speed.add(delta);
     this.drift();
 
     this.draw();

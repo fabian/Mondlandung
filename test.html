@@ -65,15 +65,15 @@
         <script>
 
         var system = new System('trace');
-        var earth = new Body('earth', system, 450, 0, 0, true);
-        var moon = new Body('moon', system, 60, 8, 0, false);
-        var rocket = new Body('rocket', system, 3, 5, 0, false);
+        var earth = new Body('earth', system, 450, new Vector(0, 0, 0), true);
+        var moon = new Body('moon', system, 60, new Vector(8, 0, 0), false);
+        var rocket = new Body('rocket', system, 3, new Vector(5, 0, 0), false);
 
         var offset = rocket.offset();
 
         document.onclick = document.ontouchstart = function () {
-            rocket.position = system.clone(offset);
-            rocket.speed = {x: 5, y: 0};
+            rocket.position = offset.clone();
+            rocket.speed = new Vector(5, 0, 0);
         };
 
         system.start();
