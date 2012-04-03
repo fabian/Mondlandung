@@ -103,11 +103,8 @@ Body.prototype.live = function () {
         return;
     }
 
-    var dx = 0;
-    var dy = 0;
-    var ndx = 0;
-    var ndy = 0;
     var i, body;
+    var delta = 0, distance2 = 0, distance = 0, n = 0, dx = 0, dy = 0;
 
     for (i in this.system.bodies) {
 
@@ -118,18 +115,16 @@ Body.prototype.live = function () {
             continue;
         }
 
-        var delta = this.delta(body);
+        delta = this.delta(body);
 
-        var theta = Math.atan2(delta.y, delta.x);
+        distance2 = delta.y * delta.y + delta.x * delta.x;
+        distance = Math.sqrt(distance2);
 
-        var distance2 = delta.y * delta.y + delta.x * delta.x;
-        var distance = Math.sqrt(distance2);
-        var ndx = delta.x / distance;
-        var ndy = delta.y / distance;
+        n = {x: delta.x / distance, y: delta.y / distance};
 
         var force = this.system.gravity * this.mass * body.mass / distance2;
-        dx += force * Math.cos(theta);
-        dy += force * Math.sin(theta);
+        dx += force * n.x;
+        dy += force * n.y;
 
         if (distance < 60) {
             this.speed.x = dx = 0;
