@@ -53,9 +53,33 @@
             border-radius: 10px;
             background-color: #cc3e3e;
         }
+
+        #pause {
+            background-image: url('media/images/pause.png');
+            width: 96px;
+            height: 96px;
+            position: absolute;
+            left: 20px;
+            top: 10px;
+        }
+
+        #pause.paused {
+            background-image: url('media/images/play.png');
+        }
+
+        #solve {
+            background-image: url('media/images/solve.png');
+            width: 96px;
+            height: 96px;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+        }
         </style>
     </head>
     <body>
+        <div id="pause"></div>
+        <div id="solve"></div>
         <div id="system">
             <canvas id="trace" width="1000" height="650"></canvas>
             <div id="earth" class="body"></div>
@@ -67,13 +91,24 @@
         var system = new System('trace');
         var earth = new Body('earth', system, 450, new Vector(0, 0, 0), true);
         var moon = new Body('moon', system, 60, new Vector(8, 0, 0), false);
-        var rocket = new Body('rocket', system, 3, new Vector(5, 0, 0), false);
+        var rocket = new Body('rocket', system, 3, new Vector(0, 0, 0), false);
 
         var offset = rocket.offset();
 
-        document.onclick = document.ontouchstart = function () {
+        document.onclick = document.ontouchstart = function (e) {
             rocket.position = offset.clone();
             rocket.speed = new Vector(5, 0, 0);
+        };
+
+        var pause = document.getElementById('pause');
+        pause.onclick = pause.ontouchstart = function () {
+            if (system.running) {
+                this.setAttribute('class', 'paused');
+                system.pause();
+            } else {
+                this.setAttribute('class', '');
+                system.run();
+            }
         };
 
         system.start();

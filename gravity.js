@@ -38,6 +38,7 @@ Vector.prototype.length = function () {
 function System(trace) {
 
     this.bodies = [];
+    this.running = false;
 
     this.time = 15;
     this.gravity = 0.667;
@@ -51,12 +52,24 @@ System.prototype.start = function () {
     var that = this;
 
     setInterval(function () {
-        that.calc();
+        if (that.running) {
+            that.calc();
+        }
     }, this.time);
 
     setInterval(function () {
         that.refresh();
     }, this.time);
+
+    this.run();
+};
+
+System.prototype.pause = function () {
+    this.running = false;
+};
+
+System.prototype.run = function () {
+    this.running = true;
 };
 
 System.prototype.calc = function () {
