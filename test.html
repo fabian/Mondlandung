@@ -94,13 +94,13 @@
 
         var offset = rocket.offset();
 
-        document.ontouchend ? document.ontouchend : document.onclick = function (e) {
+        document.ontouchstart ? document.ontouchstart : document.onclick = function (e) {
             rocket.position = offset.clone();
             rocket.speed = new Vector(5, 0, 0);
         };
 
         var pause = document.getElementById('pause');
-        pause.ontouchend ? pause.ontouchend : pause.onclick = function () {
+        pause.ontouchstart ? pause.ontouchstart : pause.onclick = function () {
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
