@@ -85,10 +85,11 @@ function Body(id, system, mass, speed, fixed) {
     this.div = document.getElementById(id);
     this.system = system;
     this.mass = mass;
-    this.speed = speed;
-    this.position = this.offset();
     this.fixed = fixed;
     this.traces = [];
+
+    this.speed = speed;
+    this.position = this.offset();
 
     // add body to system
     this.system.add(this);
