@@ -102,7 +102,7 @@
             }
         }
 
-        bind(document, function (e) {
+        bind(document.getElementById('solve'), function (e) {
             rocket.position = offset.clone();
             rocket.speed = new Vector(5, 0, 0);
         });
