@@ -113,13 +113,13 @@ Body.prototype.draw = function () {
     // remove older than 100
     if (this.traces.length > 100) {
         trace = this.traces.shift();
-        this.system.draw(trace, 'rgba(5, 19, 32, 1)');
+        this.system.draw(trace, 'rgba(6, 17, 26, 1)');
     }
 
     // fade out trace
     for (var i = 0, length = this.traces.length; i < length; i++) {
         trace = this.traces[i];
-        this.system.draw(trace, 'rgba(5, 19, 32, 0.02)');
+        this.system.draw(trace, 'rgba(6, 17, 26, 0.02)');
     }
 };
 
