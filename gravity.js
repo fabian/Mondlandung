@@ -121,8 +121,7 @@ Body.prototype.live = function () {
         return;
     }
 
-    var body, unit;
-    var diff = 0, distance = 0, force = 0, delta = new Vector(0, 0, 0);
+    var body, unit, diff = 0, distance = 0, force = 0, delta = new Vector(0, 0, 0);
 
     for (var i = 0, length = this.system.bodies.length; i < length; i++) {
 
