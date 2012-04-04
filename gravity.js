@@ -1,3 +1,4 @@
+/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:false, undef:true, curly:true, browser:true, indent:4, maxerr:50 */
 
 function Vector(x, y, z) {
     this.x = x;
@@ -5,19 +6,19 @@ function Vector(x, y, z) {
     this.z = z;
 }
 
-Vector.prototype.add = function(v) {
+Vector.prototype.add = function (v) {
     this.x += v.x;
     this.y += v.y;
     this.z += v.z;
 };
 
-Vector.prototype.multiply = function(k) {
+Vector.prototype.multiply = function (k) {
     this.x *= k;
     this.y *= k;
     this.z *= k;
 };
 
-Vector.prototype.clone = function() {
+Vector.prototype.clone = function () {
     return new Vector(this.x, this.y, this.z);
 };
 
@@ -54,10 +55,7 @@ System.prototype.start = function () {
 };
 
 System.prototype.tick = function () {
-
-    var i;
-
-    for (i in this.bodies) {
+    for (var i = 0, length = this.bodies.length; i < length; i++) {
         this.bodies[i].live();
     }
 };
@@ -107,7 +105,7 @@ Body.prototype.draw = function () {
     }
 
     // fade out trace
-    for (var i in this.traces) {
+    for (var i = 0, length = this.traces.length; i < length; i++) {
         trace = this.traces[i];
         this.system.draw(trace, 'rgba(5, 19, 32, 0.02)');
     }
@@ -123,10 +121,10 @@ Body.prototype.live = function () {
         return;
     }
 
-    var i, body, unit;
+    var body, unit;
     var diff = 0, distance = 0, force = 0, delta = new Vector(0, 0, 0);
 
-    for (i in this.system.bodies) {
+    for (var i = 0, length = this.system.bodies.length; i < length; i++) {
 
         body = this.system.bodies[i];
 
@@ -140,7 +138,7 @@ Body.prototype.live = function () {
         distance = diff.length();
         unit = diff.unit();
 
-        var force = this.system.gravity * this.mass * body.mass / (distance * distance);
+        force = this.system.gravity * this.mass * body.mass / (distance * distance);
         unit.multiply(force);
 
         delta.add(unit);
