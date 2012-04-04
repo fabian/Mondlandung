@@ -39,7 +39,7 @@ function System(trace) {
 
     this.bodies = [];
 
-    this.time = 30;
+    this.time = 15;
     this.gravity = 0.667;
 
     this.canvas = document.getElementById(trace);
@@ -49,14 +49,25 @@ function System(trace) {
 System.prototype.start = function () {
 
     var that = this;
+
     setInterval(function () {
-        that.tick();
+        that.calc();
+    }, this.time);
+
+    setInterval(function () {
+        that.refresh();
     }, this.time);
 };
 
-System.prototype.tick = function () {
+System.prototype.calc = function () {
     for (var i = 0, length = this.bodies.length; i < length; i++) {
         this.bodies[i].live();
+    }
+};
+
+System.prototype.refresh = function () {
+    for (var i = 0, length = this.bodies.length; i < length; i++) {
+        this.bodies[i].draw();
     }
 };
 
@@ -149,7 +160,5 @@ Body.prototype.live = function () {
 
     this.speed.add(delta);
     this.drift();
-
-    this.draw();
 };
 
