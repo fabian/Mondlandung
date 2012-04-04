@@ -94,13 +94,20 @@
 
         var offset = rocket.offset();
 
-        document.ontouchstart ? document.ontouchstart : document.onclick = function (e) {
+        function bind(element, func) {
+            if ('ontouchstart' in document.documentElement) {
+                element.ontouchstart = func;
+            } else {
+                element.onclick = func;
+            }
+        }
+
+        bind(document, function (e) {
             rocket.position = offset.clone();
             rocket.speed = new Vector(5, 0, 0);
-        };
+        });
 
-        var pause = document.getElementById('pause');
-        pause.ontouchstart ? pause.ontouchstart : pause.onclick = function () {
+        bind(document.getElementById('pause'), function () {
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
@@ -108,7 +115,7 @@
                 this.setAttribute('class', '');
                 system.run();
             }
-        };
+        });
 
         system.start();
 
