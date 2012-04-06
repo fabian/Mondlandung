@@ -7,15 +7,11 @@ function Vector(x, y, z) {
 }
 
 Vector.prototype.add = function (v) {
-    this.x += v.x;
-    this.y += v.y;
-    this.z += v.z;
+    return new Vector(this.x + v.x, this.y + v.y, this.z + v.z);
 };
 
 Vector.prototype.multiply = function (k) {
-    this.x *= k;
-    this.y *= k;
-    this.z *= k;
+    return new Vector(this.x * k, this.y * k, this.z * k);
 };
 
 Vector.prototype.clone = function () {
@@ -47,6 +43,44 @@ function System(trace) {
     this.context = this.canvas.getContext('2d');
 }
 
+System.prototype.w = function (speed, position, t, h) {
+
+    var body, direction, diff = 0, distance = 0, force = 0, a, results = [];
+
+    for (var k = 0; k < t; k = k+h) {
+
+        a = new Vector(0, 0, 0);
+
+        for (var i = 0, length = this.bodies.length; i < length; i++) {
+
+            body = this.bodies[i];
+
+            // skip moving bodies
+            if (body.fixed === false) {
+                continue;
+            }
+
+            diff = body.position.diff(position);
+            distance = diff.length();
+
+            force = this.gravity * body.mass * (distance / Math.pow(Math.abs(distance), 3));
+            a = a.add(diff.unit().multiply(force));
+
+            if (distance < 60) {
+                speed = a = new Vector(0, 0, 0);
+            }
+        }
+
+        speed = speed.add(a.multiply(h));
+
+        position = position.add(speed.multiply(h));
+
+        results.push({speed: speed, position: position});
+    }
+
+    return results;
+};
+
 System.prototype.start = function () {
 
     var that = this;
@@ -73,8 +107,17 @@ System.prototype.run = function () {
 };
 
 System.prototype.calc = function () {
+
+    var body, result;
+
     for (var i = 0, length = this.bodies.length; i < length; i++) {
-        this.bodies[i].live();
+
+        body = this.bodies[i];
+
+        result = this.w(body.speed, body.position, 2, 0.01).pop();
+
+        body.position = result.position;
+        body.speed = result.speed;
     }
 };
 
@@ -134,45 +177,5 @@ Body.prototype.draw = function () {
         trace = this.traces[i];
         this.system.draw(trace, 'rgba(6, 17, 26, 0.02)');
     }
-};
-
-Body.prototype.drift = function () {
-    this.position.add(this.speed);
-};
-
-Body.prototype.live = function () {
-
-    if (this.fixed) {
-        return;
-    }
-
-    var body, unit, diff = 0, distance = 0, force = 0, delta = new Vector(0, 0, 0);
-
-    for (var i = 0, length = this.system.bodies.length; i < length; i++) {
-
-        body = this.system.bodies[i];
-
-        // skip moving bodies and the body itself
-        if (body.fixed === false || body === this) {
-            continue;
-        }
-
-        diff = body.position.diff(this.position);
-
-        distance = diff.length();
-        unit = diff.unit();
-
-        force = this.system.gravity * this.mass * body.mass / (distance * distance);
-        unit.multiply(force);
-
-        delta.add(unit);
-
-        if (distance < 60) {
-            this.speed = delta = new Vector(0, 0, 0);
-        }
-    }
-
-    this.speed.add(delta);
-    this.drift();
 };
 
