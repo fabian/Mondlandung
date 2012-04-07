@@ -108,10 +108,14 @@
         });
 
         bind(document.getElementById('pause'), function () {
+            var results;
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
+                results = system.w(new Vector(2.8, 0, 0), offset.clone(), 900, 5);
+                system.draw(results);
             } else {
+                system.clear();
                 this.setAttribute('class', '');
                 system.run();
             }

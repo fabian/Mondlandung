@@ -131,9 +131,20 @@ System.prototype.add = function (body) {
     this.bodies.push(body);
 };
 
-System.prototype.draw = function (position, color) {
-    this.context.fillStyle = color;
-    this.context.fillRect(Math.round(position.x), Math.round(position.y), 1, 1);
+System.prototype.draw = function (results) {
+
+    var position;
+
+    // fade out trace
+    for (var i = 0, length = results.length; i < length; i++) {
+        position = results[i].position;
+        this.context.fillStyle = 'rgba(255, 236, 145, 1)';
+        this.context.fillRect(position.x, position.y, 1, 1);
+    }
+};
+
+System.prototype.clear = function (results) {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
 function Body(id, system, mass, speed, fixed) {
@@ -156,26 +167,7 @@ Body.prototype.offset = function () {
 };
 
 Body.prototype.draw = function () {
-
-    var trace;
-
     this.div.style.left = (this.position.x - this.div.offsetWidth / 2) + "px";
     this.div.style.top = (this.position.y - this.div.offsetHeight / 2) + "px";
-
-    this.system.draw(this.position, 'rgba(255, 236, 145, 1)');
-
-    this.traces.push(this.position.clone());
-
-    // remove older than 100
-    if (this.traces.length > 100) {
-        trace = this.traces.shift();
-        this.system.draw(trace, 'rgba(6, 17, 26, 1)');
-    }
-
-    // fade out trace
-    for (var i = 0, length = this.traces.length; i < length; i++) {
-        trace = this.traces[i];
-        this.system.draw(trace, 'rgba(6, 17, 26, 0.02)');
-    }
 };
 
