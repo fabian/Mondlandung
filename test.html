@@ -66,8 +66,8 @@
             background-image: url('media/images/play.png');
         }
 
-        #solve {
-            background-image: url('media/images/solve.png');
+        #launch {
+            background-image: url('media/images/launch.png');
             width: 96px;
             height: 96px;
             position: absolute;
@@ -84,7 +84,7 @@
             <div id="rocket" class="body"></div>
         </div>
         <div id="pause"></div>
-        <div id="solve"></div>
+        <div id="launch"></div>
         <script>
 
         var system = new System('trace');
@@ -102,7 +102,7 @@
             }
         }
 
-        bind(document.getElementById('solve'), function (e) {
+        bind(document.getElementById('launch'), function (e) {
             rocket.position = offset.clone();
             rocket.speed = new Vector(2.8, 0, 0);
         });
