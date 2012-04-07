@@ -137,9 +137,11 @@ System.prototype.draw = function (results) {
 
     // fade out trace
     for (var i = 0, length = results.length; i < length; i++) {
-        position = results[i].position;
-        this.context.fillStyle = 'rgba(255, 236, 145, 1)';
-        this.context.fillRect(position.x, position.y, 1, 1);
+        if (i % 1000 == 0) {
+            position = results[i].position;
+            this.context.fillStyle = 'rgba(255, 236, 145, 1)';
+            this.context.fillRect(position.x, position.y, 1, 1);
+        }
     }
 };
 
