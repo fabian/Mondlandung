@@ -131,13 +131,13 @@ System.prototype.add = function (body) {
     this.bodies.push(body);
 };
 
-System.prototype.draw = function (results) {
+System.prototype.draw = function (results, each) {
 
     var position;
 
     // fade out trace
     for (var i = 0, length = results.length; i < length; i++) {
-        if (i % 1000 == 0) {
+        if (i % each == 0) {
             position = results[i].position;
             this.context.fillStyle = 'rgba(255, 236, 145, 1)';
             this.context.fillRect(position.x, position.y, 1, 1);

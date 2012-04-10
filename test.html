@@ -112,8 +112,8 @@
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
-                results = system.w(new Vector(2.8, 0, 0), offset.clone(), 900, 0.01);
-                system.draw(results);
+                results = system.w(new Vector(2.8, 0, 0), offset.clone(), 900, 0.1);
+                system.draw(results, 100);
             } else {
                 system.clear();
                 this.setAttribute('class', '');
