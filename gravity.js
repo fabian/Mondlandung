@@ -19,7 +19,9 @@ Vector.prototype.clone = function () {
 };
 
 Vector.prototype.diff = function (v) {
-    return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
+	if(v != undefined) {
+	    return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
+	}
 };
 
 Vector.prototype.unit = function () {
@@ -122,9 +124,30 @@ System.prototype.calc = function () {
 };
 
 System.prototype.refresh = function () {
+    var landed = false;
+    var lastBody = [];
+    var distance, diff = 99999;
+    
     for (var i = 0, length = this.bodies.length; i < length; i++) {
         this.bodies[i].draw();
+        
+        diff = this.bodies[i].position.diff(lastBody.position);
+        
+        if(diff != undefined) {
+	        distance = diff.length();
+	    }
+        
+        if (distance < 30) {
+			landed = true;
+        }
+        
+        lastBody = this.bodies[i];
     }
+    
+    if(landed) {
+   		console.log("The eagle has landed!");
+   		this.pause();
+    }	
 };
 
 System.prototype.add = function (body) {
