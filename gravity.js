@@ -114,7 +114,7 @@ System.prototype.calc = function () {
 
         body = this.bodies[i];
 
-        result = this.w(body.speed, body.position, 2, 0.01).pop();
+        result = this.w(body.speed, body.position, 1, 0.01).pop();
 
         body.position = result.position;
         body.speed = result.speed;
