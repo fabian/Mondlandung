@@ -92,7 +92,7 @@
         var moon = new Body('moon', system, 60, new Vector(2, 0, 0), false);
         var rocket = new Body('rocket', system, 3, new Vector(0, 0, 0), false);
 
-        var offset = rocket.offset();
+        var speed = new Vector(5.6, 0, 0), offset = rocket.offset();
 
         function bind(element, func) {
             if ('ontouchstart' in document.documentElement) {
@@ -104,7 +104,7 @@
 
         bind(document.getElementById('launch'), function (e) {
             rocket.position = offset.clone();
-            rocket.speed = new Vector(2.8, 0, 0);
+            rocket.speed = speed;
         });
 
         bind(document.getElementById('pause'), function () {
@@ -112,8 +112,8 @@
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
-                results = system.w(new Vector(2.8, 0, 0), offset.clone(), 900, 0.1);
-                system.draw(results, 100);
+                results = system.w(speed, offset.clone(), 275, 0.1);
+                system.draw(results, 10);
             } else {
                 system.clear();
                 this.setAttribute('class', '');
