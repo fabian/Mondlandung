@@ -19,7 +19,7 @@ Vector.prototype.clone = function () {
 };
 
 Vector.prototype.diff = function (v) {
-    if(v != undefined) {
+    if (v != undefined) {
         return new Vector(this.x - v.x, this.y - v.y, this.z - v.z);
     }
 };
@@ -49,7 +49,7 @@ System.prototype.w = function (speed, position, t, h) {
 
     var body, diff, distance, force, a, results = [];
 
-    for (var k = 0; k < t; k = k+h) {
+    for (var k = 0; k < t; k = k + h) {
 
         // init acceleration
         a = new Vector(0, 0, 0);
@@ -140,7 +140,7 @@ System.prototype.refresh = function () {
         
         diff = this.bodies[i].position.diff(lastBody.position);
         
-        if(diff != undefined) {
+        if (diff != undefined) {
             distance = diff.length();
         }
         
@@ -151,9 +151,9 @@ System.prototype.refresh = function () {
         lastBody = this.bodies[i];
     }
     
-    if(landed) {
-           console.log("The eagle has landed!");
-           this.pause();
+    if (landed) {
+        console.log("The eagle has landed!");
+        this.pause();
     }    
 };
 
@@ -167,7 +167,7 @@ System.prototype.draw = function (results, each) {
 
     // fade out trace
     for (var i = 0, length = results.length; i < length; i++) {
-        if (i % each == 0) {
+        if (i % each === 0) {
             position = results[i].position;
             this.context.fillStyle = 'rgba(255, 236, 145, 1)';
             this.context.fillRect(position.x, position.y, 1, 1);
