@@ -47,10 +47,11 @@ function System(trace) {
 
 System.prototype.w = function (speed, position, t, h) {
 
-    var body, direction, diff = 0, distance = 0, force = 0, a, results = [];
+    var body, diff, distance, force, a, results = [];
 
     for (var k = 0; k < t; k = k+h) {
 
+        // init acceleration
         a = new Vector(0, 0, 0);
 
         for (var i = 0, length = this.bodies.length; i < length; i++) {
@@ -62,21 +63,27 @@ System.prototype.w = function (speed, position, t, h) {
                 continue;
             }
 
+            // calculate distance between current position and other body
             diff = body.position.diff(position);
             distance = diff.length();
 
+            // calculate gravitational force and add it to acceleration
             force = this.gravity * body.mass * (distance / Math.pow(Math.abs(distance), 3));
             a = a.add(diff.unit().multiply(force));
 
+            // collision detection
             if (distance < 60) {
                 speed = a = new Vector(0, 0, 0);
             }
         }
 
+        // increase speed with acceleration
         speed = speed.add(a.multiply(h));
 
+        // change position based on speed
         position = position.add(speed.multiply(h));
 
+        // add step to results array
         results.push({speed: speed, position: position});
     }
 
