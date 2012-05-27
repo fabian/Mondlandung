@@ -2,10 +2,10 @@ buster.testCase("State", {
 
 	setUp: function () {
 
-        var a = new Vector(1, 2, 3);
-        var b = new Vector(4, 5, 6);
+        var position = new Vector(1, 2, 3);
+        var velocity = new Vector(4, 5, 6);
 
-        this.state = new State(a, b);
+        this.state = new State(position, velocity);
     },
 
     "position": function () {
