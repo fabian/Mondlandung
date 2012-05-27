@@ -147,7 +147,8 @@ System.prototype.rk4 = function (state, t, steps, bodies) {
             diff = body.state.position.diff(result.position);
 
             if (diff.length() < 61) {
-            	return [state.clone()];
+            	results.push(state.clone());
+            	return results;
             }
         }
 
@@ -191,7 +192,8 @@ System.prototype.step = function () {
 	this.draw(results, 10);
     this.moon.state = results.pop();
 
-    this.rocket.state = this.rk4(this.rocket.state, this.time/1000, 2, [this.earth, this.moon]).pop();
+    results = this.rk4(this.rocket.state, this.time/1000, 2, [this.earth, this.moon]);
+    this.rocket.state = results.pop();
 };
 
 System.prototype.refresh = function () {

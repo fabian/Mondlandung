@@ -108,25 +108,15 @@
         });
 
         bind(document.getElementById('pause'), function () {
-            var result, results;
+            var state, results;
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
-                results = system.euler(velocity, offset.clone(), 275, 0.1);
-                
-                
-                var body, diff, distance, force, a, results = [];
-            
-                for (var k = 0; k < t; k = k + h) {
-            
-            		result = system.euler(velocity, offset.clone(), 275, h);
-            		velocity = result.velocity;
-            		position = result.position;
-            
-                    // add step to results array
-                    results.push(result);
-                }
-                
+
+                state = new State(offset.clone(), velocity);
+
+                results = system.rk4(state, 3, 400, [earth, moon]);
+
                 system.draw(results, 10);
             } else {
                 system.clear();
