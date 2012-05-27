@@ -33,7 +33,7 @@ Vector.prototype.length = function () {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 };
 
-function System(trace) {
+function System(trace, earth, moon, rocket) {
 
     this.bodies = [];
     this.running = false;
@@ -41,50 +41,63 @@ function System(trace) {
     this.time = 15;
     this.gravity = 0.667;
 
+    this.earth = earth;
+    this.moon = moon;
+    this.rocket = rocket;
+
+    this.add(moon);
+    this.add(rocket);
+
     this.canvas = document.getElementById(trace);
     this.context = this.canvas.getContext('2d');
 }
 
-System.prototype.w = function (speed, position, t, h) {
+System.prototype.acceleration = function (state, bodies) {
 
-    var body, diff, distance, force, a, results = [];
+    var body, diff, distance, force, a, speed = state.speed;
+
+    // init acceleration
+    a = new Vector(0, 0, 0);
+
+    for (var i = 0, length = bodies.length; i < length; i++) {
+
+        body = bodies[i];
+
+        // calculate distance between current position and other body
+        diff = body.state.position.diff(state.position);
+        distance = diff.length();
+
+        // calculate gravitational force and add it to acceleration
+        force = this.gravity * body.mass * (distance / Math.pow(Math.abs(distance), 3));
+        a = a.add(diff.unit().multiply(force));
+
+        // collision detection
+        if (distance < 60) {
+            a = new Vector(0, 0, 0);
+        }
+    }
+
+	return a;
+};
+
+System.prototype.euler = function (state, t, steps, bodies) {
+
+    var results = [], result = state.clone(), h = t / steps, a;
 
     for (var k = 0; k < t; k = k + h) {
 
-        // init acceleration
-        a = new Vector(0, 0, 0);
+		a = this.acceleration(result, bodies);
 
-        for (var i = 0, length = this.bodies.length; i < length; i++) {
+		// y = y + h*a
 
-            body = this.bodies[i];
-
-            // skip moving bodies
-            if (body.fixed === false) {
-                continue;
-            }
-
-            // calculate distance between current position and other body
-            diff = body.position.diff(position);
-            distance = diff.length();
-
-            // calculate gravitational force and add it to acceleration
-            force = this.gravity * body.mass * (distance / Math.pow(Math.abs(distance), 3));
-            a = a.add(diff.unit().multiply(force));
-
-            // collision detection
-            if (distance < 60) {
-                speed = a = new Vector(0, 0, 0);
-            }
-        }
-
-        // increase speed with acceleration
-        speed = speed.add(a.multiply(h));
-
-        // change position based on speed
-        position = position.add(speed.multiply(h));
+	    // increase speed with acceleration
+	    result.speed = result.speed.add(a.multiply(h));
+	
+	    // change position based on speed
+	    result.position = result.position.add(result.speed.multiply(h));
 
         // add step to results array
-        results.push({speed: speed, position: position});
+        results.push(result.clone());
     }
 
     return results;
@@ -96,7 +109,7 @@ System.prototype.start = function () {
 
     setInterval(function () {
         if (that.running) {
-            that.calc();
+            that.step();
         }
     }, this.time);
 
@@ -115,19 +128,14 @@ System.prototype.run = function () {
     this.running = true;
 };
 
-System.prototype.calc = function () {
+System.prototype.step = function () {
 
-    var body, result;
+    var body, results;
 
-    for (var i = 0, length = this.bodies.length; i < length; i++) {
-
-        body = this.bodies[i];
-
-        result = this.w(body.speed, body.position, 1, 0.01).pop();
-
-        body.position = result.position;
-        body.speed = result.speed;
-    }
+	results = this.euler(this.moon.state, this.time/10, 5, [this.earth]);
+	this.draw(results, 10);
+    this.moon.state = results.pop();
+    //this.rocket.state = this.euler(this.rocket.state, 1, 0.1, [this.earth, this.moon]).pop();
 };
 
 System.prototype.refresh = function () {
@@ -137,13 +145,13 @@ System.prototype.refresh = function () {
     
     for (var i = 0, length = this.bodies.length; i < length; i++) {
         this.bodies[i].draw();
-        
-        diff = this.bodies[i].position.diff(lastBody.position);
-        
+
+        diff = this.bodies[i].state.position.diff(lastBody.position);
+
         if (diff != undefined) {
             distance = diff.length();
         }
-        
+
         if (distance < 30) {
             landed = true;
         }
@@ -154,7 +162,7 @@ System.prototype.refresh = function () {
     if (landed) {
         console.log("The eagle has landed!");
         this.pause();
-    }    
+    }
 };
 
 System.prototype.add = function (body) {
@@ -179,19 +187,14 @@ System.prototype.clear = function (results) {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-function Body(id, system, mass, speed, fixed) {
+function Body(id, mass, speed, fixed) {
 
     this.div = document.getElementById(id);
-    this.system = system;
     this.mass = mass;
     this.fixed = fixed;
     this.traces = [];
 
-    this.speed = speed;
-    this.position = this.offset();
-
-    // add body to system
-    this.system.add(this);
+    this.state = new State(speed, this.offset());
 }
 
 Body.prototype.offset = function () {
@@ -199,7 +202,16 @@ Body.prototype.offset = function () {
 };
 
 Body.prototype.draw = function () {
-    this.div.style.left = (this.position.x - this.div.offsetWidth / 2) + "px";
-    this.div.style.top = (this.position.y - this.div.offsetHeight / 2) + "px";
+    this.div.style.left = (this.state.position.x - this.div.offsetWidth / 2) + "px";
+    this.div.style.top = (this.state.position.y - this.div.offsetHeight / 2) + "px";
+};
+
+function State(speed, position) {
+	this.speed = speed;
+	this.position = position;
+}
+
+State.prototype.clone = function () {
+    return new State(this.speed.clone(), this.position.clone());
 };
 

@@ -87,10 +87,10 @@
         <div id="launch"></div>
         <script>
 
-        var system = new System('trace');
-        var earth = new Body('earth', system, 1800, new Vector(0, 0, 0), true);
-        var moon = new Body('moon', system, 60, new Vector(2, 0, 0), false);
-        var rocket = new Body('rocket', system, 3, new Vector(0, 0, 0), false);
+        var earth = new Body('earth', 1800, new Vector(0, 0, 0), true);
+        var moon = new Body('moon', 60, new Vector(2, 0, 0), false);
+        var rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
+        var system = new System('trace', earth, moon, rocket);
 
         var speed = new Vector(5.6, 0, 0), offset = rocket.offset();
 
@@ -108,11 +108,25 @@
         });
 
         bind(document.getElementById('pause'), function () {
-            var results;
+            var result, results;
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
-                results = system.w(speed, offset.clone(), 275, 0.1);
+                results = system.euler(speed, offset.clone(), 275, 0.1);
+                
+                
+                var body, diff, distance, force, a, results = [];
+            
+                for (var k = 0; k < t; k = k + h) {
+            
+            		result = system.euler(speed, offset.clone(), 275, h);
+            		speed = result.speed;
+            		position = result.position;
+            
+                    // add step to results array
+                    results.push(result);
+                }
+                
                 system.draw(results, 10);
             } else {
                 system.clear();
