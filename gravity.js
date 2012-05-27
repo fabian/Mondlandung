@@ -70,11 +70,6 @@ System.prototype.acceleration = function (state, bodies) {
         // calculate gravitational force and add it to acceleration
         force = this.gravity * body.mass * (distance / Math.pow(Math.abs(distance), 3));
         a = a.add(diff.unit().multiply(force));
-
-        // collision detection
-        if (distance < 60) {
-            a = new Vector(0, 0, 0);
-        }
     }
 
 	return a;
@@ -105,7 +100,7 @@ System.prototype.euler = function (state, t, steps, bodies) {
 
 System.prototype.rk4 = function (state, t, steps, bodies) {
 
-    var results = [], result = state.clone(), h = t / steps, a, velocity, d0, d1, d2, d3, d4;
+    var results = [], result = state.clone(), h = t / steps, a, velocity, d0, d1, d2, d3, d4, diff;
 
 	var that = this;
 	function evaluate(state, h, derivative, bodies) {
@@ -142,6 +137,19 @@ System.prototype.rk4 = function (state, t, steps, bodies) {
 
 	    // increase velocity with acceleration
 	    result.velocity = result.velocity.add(a.multiply(h));
+
+        // collision detection
+        for (var i = 0, length = bodies.length; i < length; i++) {
+
+            body = bodies[i];
+
+            // calculate distance between current position and other body
+            diff = body.state.position.diff(result.position);
+
+            if (diff.length() < 61) {
+            	return [state.clone()];
+            }
+        }
 
         // add step to results array
         results.push(result.clone());
@@ -182,7 +190,8 @@ System.prototype.step = function () {
 	results = this.rk4(this.moon.state, this.time/1000, 2, [this.earth]);
 	this.draw(results, 10);
     this.moon.state = results.pop();
-    //this.rocket.state = this.euler(this.rocket.state, 1, 0.1, [this.earth, this.moon]).pop();
+
+    this.rocket.state = this.rk4(this.rocket.state, this.time/1000, 2, [this.earth, this.moon]).pop();
 };
 
 System.prototype.refresh = function () {

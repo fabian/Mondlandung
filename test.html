@@ -92,7 +92,7 @@
         var rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
         var system = new System('trace', earth, moon, rocket);
 
-        var speed = new Vector(5.6, 0, 0), offset = rocket.offset();
+        var velocity = new Vector(360, 0, 0), offset = rocket.offset();
 
         function bind(element, func) {
             if ('ontouchstart' in document.documentElement) {
@@ -103,8 +103,8 @@
         }
 
         bind(document.getElementById('launch'), function (e) {
-            rocket.position = offset.clone();
-            rocket.speed = speed;
+            rocket.state.position = offset.clone();
+            rocket.state.velocity = velocity;
         });
 
         bind(document.getElementById('pause'), function () {
@@ -112,15 +112,15 @@
             if (system.running) {
                 this.setAttribute('class', 'paused');
                 system.pause();
-                results = system.euler(speed, offset.clone(), 275, 0.1);
+                results = system.euler(velocity, offset.clone(), 275, 0.1);
                 
                 
                 var body, diff, distance, force, a, results = [];
             
                 for (var k = 0; k < t; k = k + h) {
             
-            		result = system.euler(speed, offset.clone(), 275, h);
-            		speed = result.speed;
+            		result = system.euler(velocity, offset.clone(), 275, h);
+            		velocity = result.velocity;
             		position = result.position;
             
                     // add step to results array
@@ -135,7 +135,7 @@
             }
         });
 
-        //system.draw(system.w(moon.speed, moon.position, 770, 0.1), 10);
+        //system.draw(system.w(moon.velocity, moon.position, 770, 0.1), 10);
         system.start();
 
         </script>
