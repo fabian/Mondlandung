@@ -179,7 +179,7 @@ System.prototype.step = function () {
 
     var body, results;
 
-	results = this.rk4(this.moon.state, this.time/10, 2, [this.earth]);
+	results = this.rk4(this.moon.state, this.time/1000, 2, [this.earth]);
 	this.draw(results, 10);
     this.moon.state = results.pop();
     //this.rocket.state = this.euler(this.rocket.state, 1, 0.1, [this.earth, this.moon]).pop();
