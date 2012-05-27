@@ -138,20 +138,6 @@ System.prototype.rk4 = function (state, t, steps, bodies) {
 	    // increase velocity with acceleration
 	    result.velocity = result.velocity.add(a.multiply(h));
 
-        // collision detection
-        for (var i = 0, length = bodies.length; i < length; i++) {
-
-            body = bodies[i];
-
-            // calculate distance between current position and other body
-            diff = body.state.position.diff(result.position);
-
-            if (diff.length() < 61) {
-            	results.push(state.clone());
-            	return results;
-            }
-        }
-
         // add step to results array
         results.push(result.clone());
     }
@@ -184,16 +170,36 @@ System.prototype.run = function () {
     this.running = true;
 };
 
+System.prototype.calc = function (body, integration, bodies) {
+
+    var b, results, result, collision = false;
+
+	results = integration.call(this, body.state, this.time/1000, 2, bodies);
+	result = results.pop();
+
+    // collision detection
+    for (var i = 0, length = bodies.length; i < length; i++) {
+
+        b = bodies[i];
+
+        // calculate distance between current position and other body
+        diff = b.state.position.diff(result.position);
+
+        if (diff.length() < b.size().add(body.size()).x) {
+        	collision = true;
+        }
+    }
+
+    if (!collision) {
+	    this.draw(results, 10);
+	    body.state = result;
+    }
+};
+
 System.prototype.step = function () {
 
-    var body, results;
-
-	results = this.rk4(this.moon.state, this.time/1000, 2, [this.earth]);
-	this.draw(results, 10);
-    this.moon.state = results.pop();
-
-    results = this.rk4(this.rocket.state, this.time/1000, 2, [this.earth, this.moon]);
-    this.rocket.state = results.pop();
+	this.calc(this.moon, this.rk4, [this.earth]);
+	this.calc(this.rocket, this.rk4, [this.earth, this.moon]);
 };
 
 System.prototype.refresh = function () {
@@ -257,6 +263,10 @@ function Body(id, mass, velocity, fixed) {
 
 Body.prototype.offset = function () {
     return new Vector(this.div.offsetLeft + this.div.offsetWidth / 2, this.div.offsetTop + this.div.offsetHeight / 2, 0);
+};
+
+Body.prototype.size = function () {
+    return new Vector(this.div.offsetWidth / 2, this.div.offsetHeight / 2, 0);
 };
 
 Body.prototype.draw = function () {
