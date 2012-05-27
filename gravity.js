@@ -54,7 +54,7 @@ function System(trace, earth, moon, rocket) {
 
 System.prototype.acceleration = function (state, bodies) {
 
-    var body, diff, distance, force, a, speed = state.speed;
+    var body, diff, distance, force, a, velocity = state.velocity;
 
     // init acceleration
     a = new Vector(0, 0, 0);
@@ -90,11 +90,58 @@ System.prototype.euler = function (state, t, steps, bodies) {
 
 		// y = y + h*a
 
-	    // increase speed with acceleration
-	    result.speed = result.speed.add(a.multiply(h));
-	
-	    // change position based on speed
-	    result.position = result.position.add(result.speed.multiply(h));
+	    // change position based on velocity
+	    result.position = result.position.add(result.velocity.multiply(h));
+
+	    // increase velocity with acceleration
+	    result.velocity = result.velocity.add(a.multiply(h));
+
+        // add step to results array
+        results.push(result.clone());
+    }
+
+    return results;
+};
+
+System.prototype.rk4 = function (state, t, steps, bodies) {
+
+    var results = [], result = state.clone(), h = t / steps, a, velocity, d0, d1, d2, d3, d4;
+
+	var that = this;
+	function evaluate(state, h, derivative, bodies) {
+
+		var result = state.clone(), a;
+
+	    // increase velocity with acceleration
+	    result.velocity = result.velocity.add(derivative.acceleration.multiply(h));
+
+	    // change position based on velocity
+	    result.position = result.position.add(derivative.velocity.multiply(h));
+
+		a = that.acceleration(result, bodies);
+
+		return new Derivative(result.velocity, a);
+	}
+
+    for (var k = 0; k < t; k = k + h) {
+
+		d0 = new Derivative(new Vector(0, 0, 0), new Vector(0, 0, 0));
+		d1 = evaluate(result, 0, d0, bodies);
+		d2 = evaluate(result, h/2, d1, bodies);
+		d3 = evaluate(result, h/2, d2, bodies);
+		d4 = evaluate(result, h, d3, bodies);
+
+		// k = (1/6) * ((ka + 2*kb + 2*kc + kd));
+		a = d1.acceleration.add(d2.acceleration.multiply(2)).add(d3.acceleration.multiply(2)).add(d4.acceleration).multiply(1/6);
+		velocity = d1.velocity.add(d2.velocity.multiply(2)).add(d3.velocity.multiply(2)).add(d4.velocity).multiply(1/6);
+
+		// y = y + h*a
+
+	    // change position based on velocity
+	    result.position = result.position.add(velocity.multiply(h));
+
+	    // increase velocity with acceleration
+	    result.velocity = result.velocity.add(a.multiply(h));
 
         // add step to results array
         results.push(result.clone());
@@ -132,7 +179,7 @@ System.prototype.step = function () {
 
     var body, results;
 
-	results = this.euler(this.moon.state, this.time/10, 5, [this.earth]);
+	results = this.rk4(this.moon.state, this.time/10, 2, [this.earth]);
 	this.draw(results, 10);
     this.moon.state = results.pop();
     //this.rocket.state = this.euler(this.rocket.state, 1, 0.1, [this.earth, this.moon]).pop();
@@ -187,14 +234,14 @@ System.prototype.clear = function (results) {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-function Body(id, mass, speed, fixed) {
+function Body(id, mass, velocity, fixed) {
 
     this.div = document.getElementById(id);
     this.mass = mass;
     this.fixed = fixed;
     this.traces = [];
 
-    this.state = new State(speed, this.offset());
+    this.state = new State(this.offset(), velocity);
 }
 
 Body.prototype.offset = function () {
@@ -206,12 +253,16 @@ Body.prototype.draw = function () {
     this.div.style.top = (this.state.position.y - this.div.offsetHeight / 2) + "px";
 };
 
-function State(speed, position) {
-	this.speed = speed;
+function State(position, velocity) {
 	this.position = position;
+	this.velocity = velocity;
 }
 
 State.prototype.clone = function () {
-    return new State(this.speed.clone(), this.position.clone());
+    return new State(this.position.clone(), this.velocity.clone());
 };
 
+function Derivative(velocity, acceleration) {
+	this.velocity = velocity; // derivative of position
+	this.acceleration = acceleration; // derivative of velocity
+}
