@@ -45,8 +45,8 @@
         }
         
         #rocket {
-            left: 526px;
-            top: 300px;
+            left: 534px;
+            top: 306px;
             width: 10px;
             height: 10px;
             border-radius: 5px;
@@ -92,7 +92,10 @@
         var rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
         var system = new System('trace', earth, moon, rocket);
 
-        var velocity = new Vector(390, 0, 0), offset = rocket.offset();
+        var degrees = 90;
+        var radians = (degrees - 135) * (Math.PI / 180);
+        var force = 280;
+        var velocity = new Vector(Math.cos(radians) * force, Math.sin(radians) * force, 0), offset = rocket.offset();
 
         function bind(element, func) {
             if ('ontouchstart' in document.documentElement) {
