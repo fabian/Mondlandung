@@ -10,6 +10,8 @@
         
         body {
             background-color: #06111a;
+            font-family: Helvetica, Arial, sans-serif;
+            color: #fff;
         }
 
         #system {
@@ -74,6 +76,46 @@
             right: 20px;
             top: 10px;
         }
+        
+        #degrees {
+        	position: absolute;
+        	width: 96px;
+        	top: 170px;
+        	right: 20px;
+        	font-size: 1.7em;
+        	text-align: center;
+        }
+        
+        #velocity {
+        	position: absolute;
+        	width: 96px;
+        	top: 310px;
+        	right: 20px;
+        	font-size: 1.7em;
+        	text-align: center;
+        }
+        
+        .value {
+        	padding: 10px 0;
+        }
+
+        .up {
+           width: 0;
+           height: 0;
+           margin-left: 26px;
+           border-bottom: 20px solid #fff;
+           border-left: 20px solid transparent;
+           border-right: 20px solid transparent;
+        }
+
+        .down {
+           width: 0;
+           height: 0;
+           margin-left: 26px;
+           border-top: 20px solid #fff;
+           border-left: 20px solid transparent;
+           border-right: 20px solid transparent;
+        }
         </style>
     </head>
     <body>
@@ -85,6 +127,16 @@
         </div>
         <div id="pause"></div>
         <div id="launch"></div>
+        <div id="degrees">
+        	<div class="up"></div>
+    		<div class="value">90°</div>
+    		<div class="down"></div>
+        </div>
+        <div id="velocity">
+        	<div class="up"></div>
+        	<div class="value">45%</div>
+        	<div class="down"></div>
+        </div>
         <script>
 
         var earth = new Body('earth', 8000000, new Vector(0, 0, 0), true);
@@ -92,9 +144,9 @@
         var rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
         var system = new System('trace', earth, moon, rocket);
 
-        var degrees = 90;
+        var degrees = 120;
         var radians = (degrees - 135) * (Math.PI / 180);
-        var force = 280;
+        var force = 320;
         var velocity = new Vector(Math.cos(radians) * force, Math.sin(radians) * force, 0), offset = rocket.offset();
 
         function bind(element, func) {
