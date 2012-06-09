@@ -117,6 +117,10 @@
            border-left: 20px solid transparent;
            border-right: 20px solid transparent;
         }
+        
+        #background {
+        	display: none;
+        }
         </style>
     </head>
     <body>
@@ -138,6 +142,7 @@
         	<div id="percent-value" class="value">90%</div>
         	<div id="percent-down" class="down"></div>
         </div>
+        <canvas id="background" width="800" height="600"></canvas>
         <script>
 
         var earth = new Body('earth', 8000000, new Vector(0, 0, 0), true);
@@ -203,6 +208,33 @@
 
         //system.draw(system.w(moon.velocity, moon.position, 770, 0.1), 10);
         system.start();
+
+        // noise
+        var x, y, number, opacity = 0.1;
+        
+        var canvas = document.getElementById('background');
+        context = canvas.getContext('2d');
+
+		function ran(min, max) {
+		    return Math.floor(Math.random() * (max - min + 1)) + min;  
+		}
+
+		function ran2(min, max) {
+		    return Math.random() * (max - min) + min;
+		}
+
+    	for (var i = 0; i < 600; i++) {
+
+    		var x = ran(0, canvas.width);
+    		var y = ran(0, canvas.height);
+    		var size = ran2(0.5, 1.5);
+
+    		context.beginPath();
+    		context.fillStyle = 'rgba(' + (200 + ran(-30, 30)) + ',220,255,' + Math.random() + ')';
+    		context.fillRect(x, y, size, size);
+    	}
+
+    	document.body.style.backgroundImage = "url(" + canvas.toDataURL("image/png") + ")";
 
         </script>
     </body>
