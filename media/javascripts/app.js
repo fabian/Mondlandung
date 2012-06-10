@@ -98,7 +98,6 @@ App.prototype.pause = function (e) {
         e.target.setAttribute('class', 'paused');
         this.system.pause();
     } else {
-        this.system.clear();
         e.target.setAttribute('class', '');
         this.system.run();
     }
