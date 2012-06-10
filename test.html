@@ -6,6 +6,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <meta name="viewport" content="width=980, user-scalable=no" />
+        <script src="media/javascripts/app.js"></script>
         <script src="gravity.js"></script>
         <style>
         
@@ -13,6 +14,15 @@
             background-color: #151821;
             font-family: Helvetica, Arial, sans-serif;
             color: #fff;
+        }
+        
+        * {
+        	-webkit-touch-callout: none;
+        	-webkit-user-select: none;
+        	-khtml-user-select: none;
+        	-moz-user-select: none;
+        	-ms-user-select: none;
+        	user-select: none;
         }
 
         #system {
@@ -84,7 +94,7 @@
         #degrees {
         	position: absolute;
         	width: 96px;
-        	top: 170px;
+        	top: 140px;
         	right: 20px;
         	font-size: 1.7em;
         	text-align: center;
@@ -93,32 +103,35 @@
         #percent {
         	position: absolute;
         	width: 96px;
-        	top: 310px;
+        	top: 320px;
         	right: 20px;
         	font-size: 1.7em;
         	text-align: center;
         }
         
         .value {
-        	padding: 10px 0;
+        }
+        
+        .arrow {
+        	padding: 20px 0;
         }
 
         .up {
            width: 0;
            height: 0;
-           margin-left: 26px;
-           border-bottom: 20px solid #fff;
-           border-left: 20px solid transparent;
-           border-right: 20px solid transparent;
+           margin-left: 18px;
+           border-bottom: 30px solid #fff;
+           border-left: 30px solid transparent;
+           border-right: 30px solid transparent;
         }
 
         .down {
            width: 0;
            height: 0;
-           margin-left: 26px;
-           border-top: 20px solid #fff;
-           border-left: 20px solid transparent;
-           border-right: 20px solid transparent;
+           margin-left: 18px;
+           border-top: 30px solid #fff;
+           border-left: 30px solid transparent;
+           border-right: 30px solid transparent;
         }
         
         #background {
@@ -136,109 +149,18 @@
         <div id="pause"></div>
         <div id="launch"></div>
         <div id="degrees">
-        	<div id="degrees-up" class="up"></div>
+        	<div id="degrees-up" class="arrow"><div class="up"></div></div>
     		<div id="degrees-value" class="value">120°</div>
-    		<div id="degrees-down" class="down"></div>
+    		<div id="degrees-down" class="arrow"><div class="down"></div></div>
         </div>
         <div id="percent">
-        	<div id="percent-up" class="up"></div>
+        	<div id="percent-up" class="arrow"><div class="up"></div></div>
         	<div id="percent-value" class="value">90%</div>
-        	<div id="percent-down" class="down"></div>
+        	<div id="percent-down" class="arrow"><div class="down"></div></div>
         </div>
         <canvas id="background" width="800" height="600"></canvas>
         <script>
-
-        var earth = new Body('earth', 8000000, new Vector(0, 0, 0), true);
-        var moon = new Body('moon', 600, new Vector(130, 0, 0), false);
-        var rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
-        var system = new System('trace', earth, moon, rocket);
-
-        var degrees = 120;
-        var percent = 90;
-        var offset = rocket.offset();
-
-        function bind(element, func) {
-            if ('ontouchstart' in document.documentElement) {
-                element.ontouchstart = func;
-            } else {
-                element.onclick = func;
-            }
-        }
-
-        bind(document.getElementById('launch'), function (e) {
-        	var radians = (degrees - 135) * (Math.PI / 180);
-	        var force = 400 * (percent / 100);
-	        var velocity = new Vector(Math.cos(radians) * force, Math.sin(radians) * force, 0);
-            rocket.state.position = offset.clone();
-            rocket.state.velocity = velocity;
-        });
-
-        bind(document.getElementById('degrees-up'), function (e) {
-            degrees++;
-            document.getElementById('degrees-value').innerHTML = degrees + '°';
-        });
-        bind(document.getElementById('degrees-down'), function (e) {
-            degrees--;
-            document.getElementById('degrees-value').innerHTML = degrees + '°';
-        });
-
-        bind(document.getElementById('percent-up'), function (e) {
-            percent++;
-            document.getElementById('percent-value').innerHTML = percent + '%';
-        });
-        bind(document.getElementById('percent-down'), function (e) {
-            percent--;
-            document.getElementById('percent-value').innerHTML = percent + '%';
-        });
-
-        bind(document.getElementById('pause'), function () {
-            var state, results;
-            if (system.running) {
-                this.setAttribute('class', 'paused');
-                system.pause();
-
-                state = new State(offset.clone(), velocity);
-
-                results = system.rk4(state, 4, 500, [earth, moon]);
-
-                system.draw(results, 10);
-            } else {
-                system.clear();
-                this.setAttribute('class', '');
-                system.run();
-            }
-        });
-
-        //system.draw(system.w(moon.velocity, moon.position, 770, 0.1), 10);
-        system.start();
-
-        // noise
-        var x, y, number, opacity = 0.1;
-        
-        var canvas = document.getElementById('background');
-        context = canvas.getContext('2d');
-
-		function ran(min, max) {
-		    return Math.floor(Math.random() * (max - min + 1)) + min;  
-		}
-
-		function ran2(min, max) {
-		    return Math.random() * (max - min) + min;
-		}
-
-    	for (var i = 0; i < 200; i++) {
-
-    		var x = ran(0, canvas.width);
-    		var y = ran(0, canvas.height);
-    		var size = ran2(0.5, 1.5);
-
-    		context.beginPath();
-    		context.fillStyle = 'rgba(' + (200 + ran(-30, 30)) + ',220,255,' + Math.random() + ')';
-    		context.fillRect(x, y, size, size);
-    	}
-
-    	document.body.style.backgroundImage = "url(" + canvas.toDataURL("image/png") + ")";
-
+		var app = new App();
         </script>
     </body>
 </html>
