@@ -41,7 +41,7 @@ App.prototype.degreesDown = function () {
 };
 
 App.prototype.degreesValue = function () {
-    var degrees = parseInt(prompt('Degrees (0-180):', 120), 10);
+    var degrees = parseInt(prompt('Abschusswinkel (0-180):', 120), 10);
     this.setDegrees(degrees);
     this.refresh();
 };
@@ -63,7 +63,7 @@ App.prototype.percentDown = function () {
 };
 
 App.prototype.percentValue = function () {
-    var percent = parseInt(prompt('Percent (0-100):', 90), 10);
+    var percent = parseInt(prompt('Startgeschwindigkeit (0-100):', 90), 10);
     this.setPercent(percent);
     this.refresh();
 };
