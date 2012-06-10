@@ -26,6 +26,7 @@ App.prototype.init = function () {
     this.bind(document.getElementById('degrees-value'), this.degreesValue);
     this.bind(document.getElementById('degrees-down'), this.degreesDown);
     this.bind(document.getElementById('percent-up'), this.percentUp);
+    this.bind(document.getElementById('percent-value'), this.percentValue);
     this.bind(document.getElementById('percent-down'), this.percentDown);
 };
 
@@ -52,13 +53,25 @@ App.prototype.setDegrees = function (degrees) {
 };
 
 App.prototype.percentUp = function () {
-    this.percent++;
+    this.setPercent(this.percent + 1);
     this.refresh();
 };
 
 App.prototype.percentDown = function () {
-    this.percent++;
+    this.setPercent(this.percent - 1);
     this.refresh();
+};
+
+App.prototype.percentValue = function () {
+    var percent = parseInt(prompt('Percent (0-100):', 90), 10);
+    this.setPercent(percent);
+    this.refresh();
+};
+
+App.prototype.setPercent = function (percent) {
+    if (!isNaN(percent) && percent >= 0 && percent <= 100) {
+        this.percent = percent;
+    }
 };
 
 App.prototype.refresh = function () {
