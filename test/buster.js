@@ -4,7 +4,7 @@ config['Mondlandung tests'] = {
     rootPath: '../',
     environment: 'browser',
     sources: [
-        'gravity.js'
+        'media/javascripts/gravity.js'
     ],
     tests: [
         'test/*-test.js'
