@@ -77,6 +77,10 @@ App.prototype.setPercent = function (percent) {
 App.prototype.refresh = function () {
     document.getElementById('degrees-value').innerHTML = this.degrees + '°';
     document.getElementById('percent-value').innerHTML = this.percent + '%';
+    if (!this.system.running) {
+	    this.system.clear();
+	    this.preview();
+    }
 };
 
 App.prototype.velocity = function () {
@@ -91,21 +95,23 @@ App.prototype.launch = function () {
 };
 
 App.prototype.pause = function (e) {
-    var state, results;
     if (this.system.running) {
         e.target.setAttribute('class', 'paused');
         this.system.pause();
-
-        state = new State(this.offset.clone(), this.velocity());
-
-        results = this.system.rk4(state, 4, 500, [this.earth, this.moon]);
-
-        this.system.draw(results, 10);
+        this.preview();
     } else {
         this.system.clear();
         e.target.setAttribute('class', '');
         this.system.run();
     }
+};
+
+App.prototype.preview = function () {
+
+    var state = new State(this.offset.clone(), this.velocity());
+    var results = this.system.rk4(state, 9, 500, [this.earth, this.moon]);
+
+    this.system.draw(results, this.rocket, [this.earth], 1);
 };
 
 App.prototype.bind = function (element, func) {

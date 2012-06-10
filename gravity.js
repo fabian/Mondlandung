@@ -172,10 +172,20 @@ System.prototype.run = function () {
 
 System.prototype.calc = function (body, integration, bodies) {
 
-    var b, results, result, collision = false;
+    var results, result;
 
 	results = integration.call(this, body.state, this.time/1000, 2, bodies);
 	result = results.pop();
+
+    if (!this.collision(result.position, body, bodies)) {
+	    this.draw(results, body, bodies, 10);
+	    body.state = result;
+    }
+};
+
+System.prototype.collision = function (position, body, bodies) {
+
+    var b, collision = false;
 
     // collision detection
     for (var i = 0, length = bodies.length; i < length; i++) {
@@ -183,17 +193,14 @@ System.prototype.calc = function (body, integration, bodies) {
         b = bodies[i];
 
         // calculate distance between current position and other body
-        diff = b.state.position.diff(result.position);
+        diff = b.state.position.diff(position);
 
         if (diff.length() < b.size().add(body.size()).x) {
         	collision = true;
         }
     }
 
-    if (!collision) {
-	    this.draw(results, 10);
-	    body.state = result;
-    }
+    return collision;
 };
 
 System.prototype.step = function () {
@@ -233,14 +240,20 @@ System.prototype.add = function (body) {
     this.bodies.push(body);
 };
 
-System.prototype.draw = function (results, each) {
+System.prototype.draw = function (results, body, bodies, each) {
 
     var position;
 
-    // fade out trace
     for (var i = 0, length = results.length; i < length; i++) {
+
         if (i % each === 0) {
+
             position = results[i].position;
+
+			if (this.collision(position, body, bodies)) {
+				return;
+			}
+
             this.context.fillStyle = 'rgba(255, 236, 145, 1)';
             this.context.fillRect(position.x, position.y, 1, 1);
         }
