@@ -170,7 +170,7 @@ System.prototype.run = function () {
     this.running = true;
 };
 
-System.prototype.calc = function (body, integration, bodies) {
+System.prototype.calc = function (body, integration, bodies, trace) {
 
     var results, result;
 
@@ -178,7 +178,9 @@ System.prototype.calc = function (body, integration, bodies) {
 	result = results.pop();
 
     if (!this.collision(result.position, body, bodies)) {
-	    this.draw(results, body, bodies, 10);
+    	if (trace) {
+	    	this.draw(results, body, bodies, 10);
+	    }
 	    body.state = result;
     }
 };
@@ -205,8 +207,8 @@ System.prototype.collision = function (position, body, bodies) {
 
 System.prototype.step = function () {
 
-	this.calc(this.moon, this.rk4, [this.earth]);
-	this.calc(this.rocket, this.rk4, [this.earth, this.moon]);
+	this.calc(this.moon, this.rk4, [this.earth], false);
+	this.calc(this.rocket, this.rk4, [this.earth, this.moon], true);
 };
 
 System.prototype.refresh = function () {
