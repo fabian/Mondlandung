@@ -13,6 +13,7 @@ function App() {
 
     this.init();
     this.background();
+    this.preview();
 
     //this.system.draw(system.w(moon.velocity, moon.position, 770, 0.1), 10);
     this.system.start();
@@ -77,10 +78,8 @@ App.prototype.setPercent = function (percent) {
 App.prototype.refresh = function () {
     document.getElementById('degrees-value').innerHTML = this.degrees + '°';
     document.getElementById('percent-value').innerHTML = this.percent + '%';
-    if (!this.system.running) {
-	    this.system.clear();
-	    this.preview();
-    }
+    this.system.clear();
+    this.preview();
 };
 
 App.prototype.velocity = function () {
@@ -98,7 +97,6 @@ App.prototype.pause = function (e) {
     if (this.system.running) {
         e.target.setAttribute('class', 'paused');
         this.system.pause();
-        this.preview();
     } else {
         this.system.clear();
         e.target.setAttribute('class', '');
