@@ -9,7 +9,7 @@ function App() {
     this.rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
     this.system = new System('trace', this.earth, this.moon, this.rocket);
 
-    this.degrees = 120;
+    this.degrees = 140;
     this.percent = 90;
     this.time= 2;
 
@@ -36,7 +36,7 @@ App.prototype.step = function () {
 	}
     this.system.step();
 	this.system.refresh();
-	document.getElementById('t').innerHTML = 't = ' + Math.floor(this.system.t) + '"';
+	document.getElementById('t').innerHTML = 't = ' + this.system.t.toFixed(1) + '"';
 };
 
 App.prototype.reset = function () {
@@ -70,7 +70,7 @@ App.prototype.degreesDown = function () {
 };
 
 App.prototype.degreesValue = function () {
-    var degrees = parseInt(prompt('Abschusswinkel (0-180):', 120), 10);
+    var degrees = parseFloat(prompt('Abschusswinkel (0-180):', 120));
     this.setDegrees(degrees);
     this.refresh();
 };
@@ -92,7 +92,7 @@ App.prototype.percentDown = function () {
 };
 
 App.prototype.percentValue = function () {
-    var percent = parseInt(prompt('Startgeschwindigkeit (0-100):', 90), 10);
+    var percent = parseFloat(prompt('Startgeschwindigkeit (0-100):', 90));
     this.setPercent(percent);
     this.refresh();
 };
@@ -114,7 +114,7 @@ App.prototype.timeDown = function () {
 };
 
 App.prototype.timeValue = function () {
-    var time = parseInt(prompt('Abschusszeit (0-10):', 2), 10);
+    var time = parseFloat(prompt('Abschusszeit (0-10):', 2));
     this.setTime(time);
     this.refresh();
 };
