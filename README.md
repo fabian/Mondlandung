@@ -3,7 +3,7 @@
 ## Installation
 
 * `git clone git://github.com/fabian/Mondlandung.git`
-* `open test.html`
+* `open index.html`
 
 ## Testing
 
