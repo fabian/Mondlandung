@@ -70,46 +70,40 @@
             box-shadow: inset -2px 0 0 rgba(0, 0, 0, 0.3);
         }
 
-        #pause {
-            background-image: url('media/images/pause.png');
-            width: 96px;
-            height: 96px;
-            position: absolute;
-            left: 20px;
-            top: 10px;
+        #t {
+        	font-size: 1.7em;
+        	position: absolute;
+        	left: 40px;
+        	top: 35px;
         }
 
-        #pause.paused {
-            background-image: url('media/images/play.png');
-        }
-
-        #launch {
-            background-image: url('media/images/launch.png');
-            width: 96px;
-            height: 96px;
-            position: absolute;
-            right: 20px;
-            top: 10px;
-        }
-        
         #degrees {
         	position: absolute;
         	width: 96px;
-        	top: 140px;
+        	top: 25px;
         	right: 20px;
         	font-size: 1.7em;
         	text-align: center;
         }
-        
+
         #percent {
         	position: absolute;
         	width: 96px;
-        	top: 320px;
+        	top: 225px;
         	right: 20px;
         	font-size: 1.7em;
         	text-align: center;
         }
-        
+
+        #time {
+        	position: absolute;
+        	width: 96px;
+        	top: 425px;
+        	right: 20px;
+        	font-size: 1.7em;
+        	text-align: center;
+        }
+
         .value {
         }
         
@@ -148,7 +142,7 @@
             <div id="rocket" class="body"></div>
         </div>
         <div id="pause"></div>
-        <div id="launch"></div>
+        <div id="t">t = 0</div>
         <div id="degrees">
         	<div id="degrees-up" class="arrow"><div class="up"></div></div>
     		<div id="degrees-value" class="value">120°</div>
@@ -158,6 +152,11 @@
         	<div id="percent-up" class="arrow"><div class="up"></div></div>
         	<div id="percent-value" class="value">90%</div>
         	<div id="percent-down" class="arrow"><div class="down"></div></div>
+        </div>
+        <div id="time">
+        	<div id="time-up" class="arrow"><div class="up"></div></div>
+        	<div id="time-value" class="value">2"</div>
+        	<div id="time-down" class="arrow"><div class="down"></div></div>
         </div>
         <canvas id="background" width="800" height="600"></canvas>
         <script>

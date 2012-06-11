@@ -38,6 +38,7 @@ function System(trace, earth, moon, rocket) {
     this.bodies = [];
     this.running = false;
 
+	this.t = 0;
     this.time = 15;
     this.gravity = 0.667;
 
@@ -146,28 +147,11 @@ System.prototype.rk4 = function (state, t, steps, bodies) {
 };
 
 System.prototype.start = function () {
-
-    var that = this;
-
-    setInterval(function () {
-        if (that.running) {
-            that.step();
-        }
-    }, this.time);
-
-    setInterval(function () {
-        that.refresh();
-    }, this.time);
-
-    this.run();
+    this.running = true;
 };
 
 System.prototype.pause = function () {
     this.running = false;
-};
-
-System.prototype.run = function () {
-    this.running = true;
 };
 
 System.prototype.calc = function (body, integration, bodies) {
@@ -204,15 +188,20 @@ System.prototype.collision = function (position, body, bodies) {
 
 System.prototype.step = function () {
 
-	this.calc(this.moon, this.rk4, [this.earth]);
-	this.calc(this.rocket, this.rk4, [this.earth, this.moon]);
+	if (this.running) {
+
+		this.t = this.t + this.time/1000;
+
+		this.calc(this.moon, this.rk4, [this.earth]);
+		this.calc(this.rocket, this.rk4, [this.earth, this.moon]);
+	}
 };
 
 System.prototype.refresh = function () {
     var landed = false;
     var lastBody = [];
     var distance, diff = 99999;
-    
+
     for (var i = 0, length = this.bodies.length; i < length; i++) {
         this.bodies[i].draw();
 
@@ -225,10 +214,10 @@ System.prototype.refresh = function () {
         if (distance < 30) {
             landed = true;
         }
-        
+
         lastBody = this.bodies[i];
     }
-    
+
     if (landed) {
         console.log("The eagle has landed!");
         this.pause();
@@ -271,7 +260,12 @@ function Body(id, mass, velocity, fixed) {
     this.traces = [];
 
     this.state = new State(this.offset(), velocity);
+    this.original = this.state.clone();
 }
+
+Body.prototype.reset = function () {
+    this.state = this.original.clone();
+};
 
 Body.prototype.offset = function () {
     return new Vector(this.div.offsetLeft + this.div.offsetWidth / 2, this.div.offsetTop + this.div.offsetHeight / 2, 0);
