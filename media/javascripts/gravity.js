@@ -180,6 +180,7 @@ System.prototype.collision = function (position, body, bodies) {
 
         if (diff.length() < b.size().add(body.size()).x) {
         	collision = true;
+        	body.collision(b, diff);
         }
     }
 
@@ -261,6 +262,8 @@ function Body(id, mass, velocity, fixed) {
 
     this.state = new State(this.offset(), velocity);
     this.original = this.state.clone();
+
+    this.callbacks = [];
 }
 
 Body.prototype.reset = function () {
@@ -278,6 +281,16 @@ Body.prototype.size = function () {
 Body.prototype.draw = function () {
     this.div.style.left = (this.state.position.x - this.div.offsetWidth / 2) + "px";
     this.div.style.top = (this.state.position.y - this.div.offsetHeight / 2) + "px";
+};
+
+Body.prototype.addCallback = function (callback) {
+	this.callbacks.push(callback);
+};
+
+Body.prototype.collision = function (body, diff) {
+	for (var i = 0; i < this.callbacks.length; i++) {
+		this.callbacks[i].call(this, body, diff);
+	}
 };
 
 function State(position, velocity) {

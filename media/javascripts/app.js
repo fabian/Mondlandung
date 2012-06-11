@@ -9,6 +9,14 @@ function App() {
     this.rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
     this.system = new System('trace', this.earth, this.moon, this.rocket);
 
+	this.rocket.addCallback(function (body, diff) {
+		if (body == that.moon) {
+			//that.system.pause();
+			alert('You reached the moon! Click OK to run again.');
+			that.reset();
+		}
+	});
+
     this.degrees = 140;
     this.percent = 90;
     this.time= 2;
@@ -57,6 +65,14 @@ App.prototype.init = function () {
     this.bind(document.getElementById('time-up'), this.timeUp);
     this.bind(document.getElementById('time-value'), this.timeValue);
     this.bind(document.getElementById('time-down'), this.timeDown);
+    this.bind(document.getElementById('solve'), this.solve);
+};
+
+App.prototype.solve = function () {
+    this.setDegrees(173);
+    this.setPercent(100);
+    this.setTime(3);
+    this.refresh();
 };
 
 App.prototype.degreesUp = function () {
