@@ -80,8 +80,11 @@ App.prototype.solve = function () {
     this.system.pause();
 
     this.min = 9999999;
+    this.count = 0;
 
-    for (var i = 0; i < 29; i++) {
+    for (var i = 0; i < 17; i++) {
+
+        this.count++;
 
         solution = this.guess();
         velocity = this.system.vector(solution.degrees, solution.percent);
@@ -92,13 +95,18 @@ App.prototype.solve = function () {
         this.solveStep(solution, moon, rocket, 0);
     }
 
-    setTimeout(function () {
-        that.setDegrees(that.best.degrees);
-        that.setPercent(that.best.percent);
-        that.setTime(that.best.time);
-        that.refresh();
-        that.system.start();
-    }, 3000);
+    this.interval = setInterval(function () {
+
+        if (!that.system.running && that.count <= 0) {
+            clearTimeout(that.timeout);
+            that.setDegrees(that.best.degrees);
+            that.setPercent(that.best.percent);
+            that.setTime(that.best.time);
+            that.reset();
+            that.refresh();
+            that.system.start();
+        }
+    }, 500);
 };
 
 App.prototype.solveStep = function (solution, moon, rocket, t) {
@@ -108,7 +116,7 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
     var h = this.system.time;
 
     if (this.system.running) {
-        return false;
+        return;
     }
 
     velocity = this.system.vector(solution.degrees, solution.percent);
@@ -119,6 +127,7 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
     collision = this.system.draw(results, this.rocket, [this.earth], 100);
 
     if (collision) {
+        this.count--;
         return;
     }
 
