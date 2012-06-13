@@ -186,13 +186,15 @@ System.prototype.draw = function (results, body, bodies, each) {
             position = results[i].position;
 
 			if (this.collision(position, body, bodies)) {
-				return;
+				return true;
 			}
 
             this.context.fillStyle = 'rgba(255, 236, 145, 1)';
             this.context.fillRect(position.x, position.y, 1, 1);
         }
     }
+
+    return false;
 };
 
 System.prototype.vector = function (degrees, percent) {
