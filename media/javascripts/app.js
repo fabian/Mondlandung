@@ -98,7 +98,7 @@ App.prototype.solve = function () {
         that.setTime(that.best.time);
         that.refresh();
         that.system.start();
-    }, 2000);
+    }, 3000);
 };
 
 App.prototype.solveStep = function (solution, moon, rocket, t) {
