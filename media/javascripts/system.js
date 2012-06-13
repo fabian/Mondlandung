@@ -166,29 +166,8 @@ System.prototype.step = function () {
 };
 
 System.prototype.refresh = function () {
-    var landed = false;
-    var lastBody = [];
-    var distance, diff = 99999;
-
     for (var i = 0, length = this.bodies.length; i < length; i++) {
         this.bodies[i].draw();
-
-        diff = this.bodies[i].state.position.diff(lastBody.position);
-
-        if (diff != undefined) {
-            distance = diff.length();
-        }
-
-        if (distance < 30) {
-            landed = true;
-        }
-
-        lastBody = this.bodies[i];
-    }
-
-    if (landed) {
-        console.log("The eagle has landed!");
-        this.pause();
     }
 };
 
