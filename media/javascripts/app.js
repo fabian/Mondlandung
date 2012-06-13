@@ -29,7 +29,7 @@ function App() {
 
     setInterval(function () {
     	that.step();
-    }, this.system.time);
+    }, this.system.time * 1000);
 
     //this.system.draw(system.w(moon.velocity, moon.position, 770, 0.1), 10);
     this.system.start();
@@ -69,10 +69,80 @@ App.prototype.init = function () {
 };
 
 App.prototype.solve = function () {
-    this.setDegrees(173);
-    this.setPercent(100);
-    this.setTime(3);
-    this.refresh();
+
+    //this.setDegrees(173);
+    //this.setPercent(100);
+    //this.setTime(3);
+
+    var solution, moon, rocket;
+    var that = this;
+
+    this.system.pause();
+
+    this.min = 9999999;
+
+    for (var i = 0; i < 29; i++) {
+
+        solution = this.guess();
+        velocity = this.system.vector(solution.degrees, solution.percent);
+    
+        moon = this.system.rk4(this.moon.original.clone(), solution.time, 500, [this.earth]).pop(); // start delay
+        rocket = new State(this.rocket.original.clone().position, velocity);
+
+        this.solveStep(solution, moon, rocket, 0);
+    }
+
+    setTimeout(function () {
+        that.setDegrees(that.best.degrees);
+        that.setPercent(that.best.percent);
+        that.setTime(that.best.time);
+        that.refresh();
+        that.system.start();
+    }, 2000);
+};
+
+App.prototype.solveStep = function (solution, moon, rocket, t) {
+
+    var results, collision, distance;
+    var that = this;
+    var h = this.system.time;
+
+    if (this.system.running) {
+        return false;
+    }
+
+    velocity = this.system.vector(solution.degrees, solution.percent);
+
+    moon = this.system.rk4(moon, h, 2, [this.earth]).pop();            
+
+    results = this.system.rk4(rocket, h, 2, [this.earth, this.moon]);
+    collision = this.system.draw(results, this.rocket, [this.earth], 100);
+
+    if (collision) {
+        return;
+    }
+
+    rocket = results.pop();
+
+    distance = rocket.position.diff(moon.position).length();
+    if (distance < this.min) {
+        this.min = distance;
+        this.best = solution;
+    }
+
+    setTimeout(function () {
+        if (t < 10) {
+            that.solveStep(solution, moon, rocket, t + h);
+        }
+    }, this.system.time);
+};
+
+App.prototype.guess = function () {
+    return new Solution(this.random(10, 170), this.random(95, 100), this.random(1, 7));
+};
+
+App.prototype.random = function (min, max) {
+    return Math.floor((Math.random() * (max - min) + min) * 10) / 10;
 };
 
 App.prototype.degreesUp = function () {
@@ -209,3 +279,9 @@ App.prototype.background = function () {
 
     document.body.style.backgroundImage = "url(" + canvas.toDataURL("image/png") + ")";
 };
+
+function Solution(degrees, percent, time) {
+    this.degrees = degrees;
+    this.percent = percent;
+    this.time = time;
+}
