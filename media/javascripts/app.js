@@ -56,16 +56,16 @@ App.prototype.reset = function () {
 
 App.prototype.init = function () {
 
-    this.bind(document.getElementById('degrees-up'), this.degreesUp);
-    this.bind(document.getElementById('degrees-value'), this.degreesValue);
-    this.bind(document.getElementById('degrees-down'), this.degreesDown);
-    this.bind(document.getElementById('percent-up'), this.percentUp);
-    this.bind(document.getElementById('percent-value'), this.percentValue);
-    this.bind(document.getElementById('percent-down'), this.percentDown);
-    this.bind(document.getElementById('time-up'), this.timeUp);
-    this.bind(document.getElementById('time-value'), this.timeValue);
-    this.bind(document.getElementById('time-down'), this.timeDown);
-    this.bind(document.getElementById('solve'), this.solve);
+    this.bind('degrees-up', this.degreesUp);
+    this.bind('degrees-value', this.degreesValue);
+    this.bind('degrees-down', this.degreesDown);
+    this.bind('percent-up', this.percentUp);
+    this.bind('percent-value', this.percentValue);
+    this.bind('percent-down', this.percentDown);
+    this.bind('time-up', this.timeUp);
+    this.bind('time-value', this.timeValue);
+    this.bind('time-down', this.timeDown);
+    this.bind('solve', this.solve);
 };
 
 App.prototype.solve = function () {
@@ -168,8 +168,9 @@ App.prototype.preview = function () {
     this.system.draw(results, this.rocket, [this.earth], 1);
 };
 
-App.prototype.bind = function (element, func) {
+App.prototype.bind = function (id, func) {
 
+    var element = document.getElementById(id);
     var that = this;
     var wrap = function () {
         func.apply(that, arguments);
