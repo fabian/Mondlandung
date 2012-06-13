@@ -6,7 +6,7 @@ function System(trace, earth, moon, rocket) {
     this.running = false;
 
 	this.t = 0;
-    this.time = 15;
+    this.time = 15/1000;
     this.gravity = 0.667;
 
     this.earth = earth;
@@ -125,7 +125,7 @@ System.prototype.calc = function (body, integration, bodies) {
 
     var results, result;
 
-	results = integration.call(this, body.state, this.time/1000, 2, bodies);
+	results = integration.call(this, body.state, this.time, 2, bodies);
 	result = results.pop();
 
     if (!this.collision(result.position, body, bodies)) {
@@ -158,7 +158,7 @@ System.prototype.step = function () {
 
 	if (this.running) {
 
-		this.t = this.t + this.time/1000;
+		this.t = this.t + this.time;
 
 		this.calc(this.moon, this.rk4, [this.earth]);
 		this.calc(this.rocket, this.rk4, [this.earth, this.moon]);
