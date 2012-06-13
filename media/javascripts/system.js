@@ -216,6 +216,12 @@ System.prototype.draw = function (results, body, bodies, each) {
     }
 };
 
+System.prototype.vector = function (degrees, percent) {
+    var radians = (degrees - 135) * (Math.PI / 180);
+    var force = 400 * (percent / 100);
+    return new Vector(Math.cos(radians) * force, Math.sin(radians) * force, 0);
+};
+
 System.prototype.clear = function (results) {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };

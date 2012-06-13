@@ -150,9 +150,7 @@ App.prototype.refresh = function () {
 };
 
 App.prototype.velocity = function () {
-    var radians = (this.degrees - 135) * (Math.PI / 180);
-    var force = 400 * (this.percent / 100);
-    return new Vector(Math.cos(radians) * force, Math.sin(radians) * force, 0);
+    return this.system.vector(this.degrees, this.percent);
 };
 
 App.prototype.launch = function () {
