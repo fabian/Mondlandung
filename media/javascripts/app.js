@@ -5,7 +5,7 @@ function App() {
     var that = this;
 
     this.earth = new Body('earth', 8000000, new Vector(0, 0, 0), true);
-    this.moon = new Body('moon', 600, new Vector(130, 0, 0), false);
+    this.moon = new Body('moon', 16000000, new Vector(140, 0, 0), false);
     this.rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
     this.system = new System('trace', this.earth, this.moon, this.rocket);
 
@@ -17,9 +17,9 @@ function App() {
 		}
 	});
 
-    this.degrees = 140;
-    this.percent = 90;
-    this.time= 2;
+    this.degrees = 85;
+    this.percent = 59;
+    this.time= 1.41;
 
 	this.launched = false;
 
@@ -39,7 +39,7 @@ App.prototype.step = function () {
 	if (this.system.t > this.time && !this.launched) {
 		this.launch();
 	}
-	if (this.system.t > 10.85) {
+	if (this.system.t > 30) {
 		this.reset();
 	}
     this.system.step();
@@ -66,6 +66,7 @@ App.prototype.init = function () {
     this.bind('time-value', this.timeValue);
     this.bind('time-down', this.timeDown);
     this.bind('solve', this.solve);
+    this.bind('t', this.reset);
 };
 
 App.prototype.solve = function () {
@@ -93,8 +94,8 @@ App.prototype.solve = function () {
         moon = this.moon.clone();
         rocket = this.rocket.clone();
 
-        moon.state = this.system.rk4(moon.state, solution.time, 500, [this.earth]).pop(); // start delay
-        rocket.state = new State(rocket.original.clone().position, velocity);
+        moon.state = this.system.rk4(moon.state, solution.time, solution.time / this.system.time * 2, [this.earth]).pop(); // start delay
+        rocket.state = new State(this.rocket.original.clone().position, velocity);
 
         this.solveStep(solution, moon, rocket, 0);
     }
@@ -142,7 +143,7 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
     if (distance <= rocket.size().add(moon.size()).x && speed < this.min) {
         this.min = speed;
         this.best = solution;
-        
+
         this.system.context.fillStyle = 'rgba(255, 0, 0, 1)';
         this.system.context.fillRect(rocket.state.position.x, rocket.state.position.y, 4, 4);
     }
@@ -155,7 +156,7 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
 };
 
 App.prototype.guess = function () {
-    return new Solution(this.random(3, 177), this.random(95, 100), this.random(1, 7));
+    return new Solution(this.random(3, 177), this.random(60, 100), this.random(1, 7));
 };
 
 App.prototype.random = function (min, max) {
@@ -247,10 +248,28 @@ App.prototype.launch = function () {
 
 App.prototype.preview = function () {
 
-    var state = new State(this.rocket.original.clone().position, this.velocity());
-    var results = this.system.rk4(state, 9, 500, [this.earth, this.moon]);
+    var results, collision;
 
-    this.system.draw(results, this.rocket, [this.earth], 1);
+    var moon = this.moon.clone();
+    var rocket = this.rocket.clone();
+
+    results = this.system.rk4(moon.state, this.time, 20000, [this.earth]); // start delay
+    moon.state = results.pop();
+    rocket.state = new State(this.rocket.original.clone().position, this.velocity());
+
+    for (var i = 0; i < 1000; i++) {
+
+        results = this.system.rk4(moon.state, this.system.time, 2, [this.earth]);
+        moon.state = results.pop();
+        results = this.system.rk4(rocket.state, this.system.time, 2, [this.earth, moon]);
+        rocket.state = results.pop();
+
+        collision = this.system.draw(results, rocket, [this.earth, moon], 10);
+
+        if (collision) {
+            return;
+        }
+    }
 };
 
 App.prototype.bind = function (id, func) {
