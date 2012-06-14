@@ -246,3 +246,10 @@ Body.prototype.collision = function (body, diff) {
 		this.callbacks[i].call(this, body, diff);
 	}
 };
+
+Body.prototype.clone = function () {
+	var clone = new Body(this.div.getAttribute('id'), this.mass, new Vector(0, 0, 0), this.fixed);
+	clone.original = this.original.clone();
+	clone.state = clone.original;
+	return clone;
+};

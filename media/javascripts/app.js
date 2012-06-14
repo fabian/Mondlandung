@@ -76,6 +76,7 @@ App.prototype.solve = function () {
 
     var solution, moon, rocket;
     var that = this;
+    var count = 0;
 
     this.system.pause();
 
@@ -88,17 +89,20 @@ App.prototype.solve = function () {
 
         solution = this.guess();
         velocity = this.system.vector(solution.degrees, solution.percent);
-    
-        moon = this.system.rk4(this.moon.original.clone(), solution.time, 500, [this.earth]).pop(); // start delay
-        rocket = new State(this.rocket.original.clone().position, velocity);
+
+        moon = this.moon.clone();
+        rocket = this.rocket.clone();
+
+        moon.state = this.system.rk4(moon.state, solution.time, 500, [this.earth]).pop(); // start delay
+        rocket.state = new State(rocket.original.clone().position, velocity);
 
         this.solveStep(solution, moon, rocket, 0);
     }
 
     this.interval = setInterval(function () {
-
-        if (!that.system.running && that.count <= 0) {
-            clearTimeout(that.timeout);
+        count++;
+        if (count > 10 || (!that.system.running && that.count <= 0)) {
+            clearInterval(that.interval);
             that.setDegrees(that.best.degrees);
             that.setPercent(that.best.percent);
             that.setTime(that.best.time);
@@ -111,7 +115,7 @@ App.prototype.solve = function () {
 
 App.prototype.solveStep = function (solution, moon, rocket, t) {
 
-    var results, collision, distance;
+    var results, collision, distance, speed;
     var that = this;
     var h = this.system.time;
 
@@ -121,22 +125,26 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
 
     velocity = this.system.vector(solution.degrees, solution.percent);
 
-    moon = this.system.rk4(moon, h, 2, [this.earth]).pop();            
+    moon.state = this.system.rk4(moon.state, h, 2, [this.earth]).pop();
 
-    results = this.system.rk4(rocket, h, 2, [this.earth, this.moon]);
-    collision = this.system.draw(results, this.rocket, [this.earth], 100);
+    results = this.system.rk4(rocket.state, h, 2, [this.earth, moon]);
+    collision = this.system.draw(results, rocket, [this.earth], 100);
 
     if (collision) {
         this.count--;
         return;
     }
 
-    rocket = results.pop();
+    rocket.state = results.pop();
 
-    distance = rocket.position.diff(moon.position).length();
-    if (distance < this.min) {
-        this.min = distance;
+    distance = rocket.state.position.diff(moon.state.position).length();
+    speed = rocket.state.velocity.diff(moon.state.velocity).length();
+    if (distance < 30 && speed < this.min) {
+        this.min = speed;
         this.best = solution;
+        
+        this.system.context.fillStyle = 'rgba(255, 0, 0, 1)';
+        this.system.context.fillRect(rocket.state.position.x, rocket.state.position.y, 4, 4);
     }
 
     setTimeout(function () {
@@ -147,7 +155,7 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
 };
 
 App.prototype.guess = function () {
-    return new Solution(this.random(10, 170), this.random(95, 100), this.random(1, 7));
+    return new Solution(this.random(3, 177), this.random(95, 100), this.random(1, 7));
 };
 
 App.prototype.random = function (min, max) {
