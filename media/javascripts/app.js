@@ -83,7 +83,7 @@ App.prototype.solve = function () {
     this.min = 9999999;
     this.count = 0;
 
-    for (var i = 0; i < 17; i++) {
+    for (var i = 0; i < 99; i++) {
 
         this.count++;
 
@@ -139,7 +139,7 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
 
     distance = rocket.state.position.diff(moon.state.position).length();
     speed = rocket.state.velocity.diff(moon.state.velocity).length();
-    if (distance < 30 && speed < this.min) {
+    if (distance <= rocket.size().add(moon.size()).x && speed < this.min) {
         this.min = speed;
         this.best = solution;
         
