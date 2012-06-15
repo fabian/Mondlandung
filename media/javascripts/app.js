@@ -268,7 +268,7 @@ App.prototype.preview = function () {
     moon.state = results.pop();
     rocket.state = new State(this.rocket.original.clone().position, this.velocity());
 
-    for (var i = 0; i < 5000; i++) {
+    for (var i = 0; i < 900; i++) {
 
         if (i * this.system.time > this.time && !stopped) {
             stopped = true;
