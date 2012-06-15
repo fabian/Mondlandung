@@ -17,7 +17,7 @@ function App() {
 		}
 	});
 
-    this.degrees = 151;
+    this.degrees = 152;
     this.percent = 98;
     this.time = 0.6;
 
