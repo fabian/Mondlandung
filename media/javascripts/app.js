@@ -5,7 +5,7 @@ function App() {
     var that = this;
 
     this.earth = new Body('earth', 8000000, new Vector(0, 0, 0), true);
-    this.moon = new Body('moon', 16000000, new Vector(140, 0, 0), false);
+    this.moon = new Body('moon', 20000000, new Vector(140, 0, 0), false);
     this.rocket = new Body('rocket', 3, new Vector(0, 0, 0), false);
     this.system = new System('trace', this.earth, this.moon, this.rocket);
 
@@ -17,9 +17,13 @@ function App() {
 		}
 	});
 
-    this.degrees = 85;
-    this.percent = 59;
-    this.time= 1.39;
+    //this.degrees = 72;
+    //this.percent = 54;
+    //this.time= 0.2;
+
+    this.degrees = 90;
+    this.percent = 68;
+    this.time= 2.9;
 
 	this.launched = false;
 
@@ -84,12 +88,14 @@ App.prototype.solve = function () {
     this.min = 9999999;
     this.count = 0;
 
-    for (var i = 0; i < 99; i++) {
+    for (var i = 0; i < 29; i++) {
 
         this.count++;
 
         solution = this.guess();
         velocity = this.system.vector(solution.degrees, solution.percent);
+
+        that.best = solution; // fallback
 
         moon = this.moon.clone();
         rocket = this.rocket.clone();
@@ -97,7 +103,7 @@ App.prototype.solve = function () {
         moon.state = this.system.rk4(moon.state, solution.time, solution.time / this.system.time * 2, [this.earth]).pop(); // start delay
         rocket.state = new State(this.rocket.original.clone().position, velocity);
 
-        this.solveStep(solution, moon, rocket, 0);
+        that.solveStep(solution, moon, rocket, 0);
     }
 
     this.interval = setInterval(function () {
@@ -143,9 +149,6 @@ App.prototype.solveStep = function (solution, moon, rocket, t) {
     if (distance <= rocket.size().add(moon.size()).x && speed < this.min) {
         this.min = speed;
         this.best = solution;
-
-        this.system.context.fillStyle = 'rgba(255, 0, 0, 1)';
-        this.system.context.fillRect(rocket.state.position.x, rocket.state.position.y, 4, 4);
     }
 
     setTimeout(function () {
@@ -164,75 +167,75 @@ App.prototype.random = function (min, max) {
 };
 
 App.prototype.degreesUp = function () {
-    this.setDegrees(this.degrees + 1);
+    this.setDegrees(this.degrees + 0.1);
     this.refresh();
 };
 
 App.prototype.degreesDown = function () {
-    this.setDegrees(this.degrees - 1);
+    this.setDegrees(this.degrees - 0.1);
     this.refresh();
 };
 
 App.prototype.degreesValue = function () {
-    var degrees = parseFloat(prompt('Abschusswinkel (0-180):', 120));
+    var degrees = parseFloat(prompt('Abschusswinkel (0-180):', this.degrees));
     this.setDegrees(degrees);
     this.refresh();
 };
 
 App.prototype.setDegrees = function (degrees) {
-    if (!isNaN(degrees) && degrees >= 0 && degrees <= 180) {
+    if (!isNaN(degrees) && degrees > 0 && degrees < 180) {
         this.degrees = degrees;
     }
 };
 
 App.prototype.percentUp = function () {
-    this.setPercent(this.percent + 1);
+    this.setPercent(this.percent + 0.1);
     this.refresh();
 };
 
 App.prototype.percentDown = function () {
-    this.setPercent(this.percent - 1);
+    this.setPercent(this.percent - 0.1);
     this.refresh();
 };
 
 App.prototype.percentValue = function () {
-    var percent = parseFloat(prompt('Startgeschwindigkeit (0-100):', 90));
+    var percent = parseFloat(prompt('Startgeschwindigkeit (0-100):', this.percent));
     this.setPercent(percent);
     this.refresh();
 };
 
 App.prototype.setPercent = function (percent) {
-    if (!isNaN(percent) && percent >= 0 && percent <= 100) {
+    if (!isNaN(percent) && percent > 0 && percent <= 100) {
         this.percent = percent;
     }
 };
 
 App.prototype.timeUp = function () {
-    this.setTime(this.time + 1);
+    this.setTime(this.time + 0.1);
     this.refresh();
 };
 
 App.prototype.timeDown = function () {
-    this.setTime(this.time - 1);
+    this.setTime(this.time - 0.1);
     this.refresh();
 };
 
 App.prototype.timeValue = function () {
-    var time = parseFloat(prompt('Abschusszeit (0-10):', 2));
+    var time = parseFloat(prompt('Abschusszeit (0-10):', this.time));
     this.setTime(time);
     this.refresh();
 };
 
 App.prototype.setTime = function (time) {
-    if (!isNaN(time) && time >= 0 && time <= 10) {
+    if (!isNaN(time) && time > 0 && time <= 10) {
         this.time = time;
     }
 };
 
 App.prototype.refresh = function () {
-    document.getElementById('degrees-value').innerHTML = this.degrees + '°';
-    document.getElementById('percent-value').innerHTML = this.percent + '%';
-    document.getElementById('time-value').innerHTML = this.time + '"';
+    document.getElementById('degrees-value').innerHTML = parseFloat(this.degrees.toPrecision(12)) + '°';
+    document.getElementById('percent-value').innerHTML = parseFloat(this.percent.toPrecision(12)) + '%';
+    document.getElementById('time-value').innerHTML = parseFloat(this.time.toPrecision(12)) + '"';
     this.system.clear();
     this.preview();
 };
@@ -254,11 +257,11 @@ App.prototype.preview = function () {
     var moon = this.moon.clone();
     var rocket = this.rocket.clone();
 
-    results = this.system.rk4(moon.state, delay, 20000, [this.earth]); // start delay
+    results = this.system.rk4(moon.state, delay, 2000, [this.earth]); // start delay
     moon.state = results.pop();
     rocket.state = new State(this.rocket.original.clone().position, this.velocity());
 
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < 10000; i++) {
 
         results = this.system.rk4(moon.state, this.system.time, 2, [this.earth]);
         moon.state = results.pop();
