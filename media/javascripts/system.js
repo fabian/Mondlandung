@@ -199,7 +199,7 @@ System.prototype.draw = function (results, body, bodies, each) {
 
 System.prototype.vector = function (degrees, percent) {
     var radians = (degrees - 135) * (Math.PI / 180);
-    var force = 400 * (percent / 100);
+    var force = 500 * (percent / 100);
     return new Vector(Math.cos(radians) * force, Math.sin(radians) * force, 0);
 };
 
@@ -249,7 +249,7 @@ Body.prototype.collision = function (body, diff) {
 
 Body.prototype.clone = function () {
 	var clone = new Body(this.div.getAttribute('id'), this.mass, new Vector(0, 0, 0), this.fixed);
-	clone.original = this.original.clone();
-	clone.state = clone.original;
+	clone.state = this.original.clone();
+	clone.original = clone.state.clone();
 	return clone;
 };
