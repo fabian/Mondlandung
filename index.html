@@ -18,6 +18,10 @@
             background-color: #151821;
             font-family: Helvetica, Arial, sans-serif;
             color: #fff;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
 
         * {
@@ -30,13 +34,13 @@
         }
 
         #system {
-            width: 1000px;
-            height: 650px;
+            width: 2000px;
+            height: 1000px;
             position: absolute;
             left: 50%;
             top: 50%;
-            margin-left: -500px;
-            margin-top: -350px;
+            margin-left: -1000px;
+            margin-top: -500px;
         }
 
         .body {
@@ -44,8 +48,8 @@
         }
 
         #earth {
-            left: 450px;
-            top: 300px;
+            left: 950px;
+            top: 420px;
             width: 100px;
             height: 100px;
             border-radius: 50px;
@@ -54,8 +58,8 @@
         }
         
         #moon {
-            left: 480px;
-            top: 50px;
+            left: 980px;
+            top: 170px;
             width: 40px;
             height: 40px;
             border-radius: 20px;
@@ -64,8 +68,8 @@
         }
         
         #rocket {
-            left: 534px;
-            top: 306px;
+            left: 1034px;
+            top: 426px;
             width: 10px;
             height: 10px;
             border-radius: 5px;
@@ -149,7 +153,7 @@
     </head>
     <body>
         <div id="system">
-            <canvas id="trace" width="1000" height="650"></canvas>
+            <canvas id="trace" width="2000" height="1000"></canvas>
             <div id="earth" class="body"></div>
             <div id="moon" class="body"></div>
             <div id="rocket" class="body"></div>
