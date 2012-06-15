@@ -11,9 +11,9 @@ function App() {
 
 	this.rocket.addCallback(function (body, diff) {
 		if (body == that.moon) {
-			//that.system.pause();
-			alert('You reached the moon! Click OK to run again.');
-			that.reset();
+			that.system.pause();
+			//alert('You reached the moon! Click OK to run again.');
+			//that.reset();
 		}
 	});
 
