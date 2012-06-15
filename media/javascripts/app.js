@@ -11,25 +11,25 @@ function App() {
 
 	this.rocket.addCallback(function (body, diff) {
 		if (body == that.moon) {
-			that.system.pause();
+			//that.system.pause();
 			//alert('You reached the moon! Click OK to run again.');
-			//that.reset();
+			that.reset();
 		}
 	});
 
-    //this.degrees = 72;
-    //this.percent = 54;
-    //this.time= 0.2;
-
-    this.degrees = 90;
-    this.percent = 68;
-    this.time= 2.9;
+    this.degrees = 151;
+    this.percent = 98;
+    this.time = 0.6;
 
 	this.launched = false;
+	this.stopped = false;
+	this.break = 0.8;
+	this.delay = 4;
 
     this.init();
     this.background();
     this.preview();
+    this.refresh();
 
     setInterval(function () {
     	that.step();
@@ -40,15 +40,20 @@ function App() {
 }
 
 App.prototype.step = function () {
-	if (this.system.t > this.time && !this.launched) {
+    var t = this.system.t - this.delay;
+	if (this.system.t > this.delay && !this.launched) {
 		this.launch();
 	}
-	if (this.system.t > 30) {
+	if (this.system.t > this.time + this.delay && !this.stopped) {
+	    this.stopped = true;
+	    this.rocket.state.velocity = this.rocket.state.velocity.multiply(this.break);
+	}
+	if (this.system.t > 120) {
 		this.reset();
 	}
     this.system.step();
 	this.system.refresh();
-	document.getElementById('t').innerHTML = 't = ' + this.system.t.toFixed(1) + '"';
+	document.getElementById('t').innerHTML = 't = ' + t.toFixed(1) + '"';
 };
 
 App.prototype.reset = function () {
@@ -56,6 +61,7 @@ App.prototype.reset = function () {
 	this.rocket.reset();
 	this.system.t = 0;
 	this.launched = false;
+	this.stopped = false;
 };
 
 App.prototype.init = function () {
@@ -221,7 +227,7 @@ App.prototype.timeDown = function () {
 };
 
 App.prototype.timeValue = function () {
-    var time = parseFloat(prompt('Abschusszeit (0-10):', this.time));
+    var time = parseFloat(prompt('Bremszeit (0-10):', this.time));
     this.setTime(time);
     this.refresh();
 };
@@ -252,7 +258,8 @@ App.prototype.launch = function () {
 App.prototype.preview = function () {
 
     var results, collision;
-    var delay = (Math.floor(this.time / this.system.time) + 1) * this.system.time;
+    var delay = (Math.floor(this.delay / this.system.time) + 1) * this.system.time;
+    var stopped = false;
 
     var moon = this.moon.clone();
     var rocket = this.rocket.clone();
@@ -261,7 +268,12 @@ App.prototype.preview = function () {
     moon.state = results.pop();
     rocket.state = new State(this.rocket.original.clone().position, this.velocity());
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < 5000; i++) {
+
+        if (i * this.system.time > this.time && !stopped) {
+            stopped = true;
+            rocket.state.velocity = rocket.state.velocity.multiply(this.break);
+        }
 
         results = this.system.rk4(moon.state, this.system.time, 2, [this.earth]);
         moon.state = results.pop();
