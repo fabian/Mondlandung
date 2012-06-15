@@ -270,7 +270,7 @@ App.prototype.preview = function () {
 
     for (var i = 0; i < 900; i++) {
 
-        if (i * this.system.time > this.time && !stopped) {
+        if ((i + 1) * this.system.time > this.time && !stopped) {
             stopped = true;
             rocket.state.velocity = rocket.state.velocity.multiply(this.break);
         }
