@@ -19,7 +19,7 @@ function App() {
 
     this.degrees = 85;
     this.percent = 59;
-    this.time= 1.41;
+    this.time= 1.39;
 
 	this.launched = false;
 
@@ -249,15 +249,16 @@ App.prototype.launch = function () {
 App.prototype.preview = function () {
 
     var results, collision;
+    var delay = (Math.floor(this.time / this.system.time) + 1) * this.system.time;
 
     var moon = this.moon.clone();
     var rocket = this.rocket.clone();
 
-    results = this.system.rk4(moon.state, this.time, 20000, [this.earth]); // start delay
+    results = this.system.rk4(moon.state, delay, 20000, [this.earth]); // start delay
     moon.state = results.pop();
     rocket.state = new State(this.rocket.original.clone().position, this.velocity());
 
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 100000; i++) {
 
         results = this.system.rk4(moon.state, this.system.time, 2, [this.earth]);
         moon.state = results.pop();
